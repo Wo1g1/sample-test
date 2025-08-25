@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>마법 세계관 테스트 — 데모</title>
+<style>
+  :root{
+    --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;--good:#06d6a0;--warn:#ffd166;--bad:#ef476f;
+    --card:#11131a;--line:#253045;--chip:#0e1117;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink)}
+  a{color:var(--accent)}
+  .wrap{max-width:1000px;margin:0 auto;padding:20px}
+  header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,12,16,.95),rgba(11,12,16,.6));backdrop-filter:blur(8px);z-index:10}
+  .toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+  h1{font-size:18px;margin:0}
+  .chip{background:var(--chip);border:1px solid var(--line);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:12px}
+  .btn{border:1px solid var(--line);background:#0f1117;color:var(--ink);padding:10px 12px;border-radius:12px;cursor:pointer}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#7bdff2)}
+  .btn.ghost{background:#0b0c10}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
+  @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .q{display:flex;gap:12px}
+  .qnum{flex:0 0 44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--chip);border:1px solid var(--line);border-radius:10px;color:var(--muted)}
+  .qbody{flex:1}
+  .qtext{margin:0 0 10px;font-weight:600}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#0f1117;padding:8px 10px;border-radius:10px;cursor:pointer}
+  .opt input{accent-color:var(--accent)}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .legend span{font-size:12px;color:var(--muted)}
+  .sticky-cta{position:sticky;bottom:0;display:flex;gap:10px;justify-content:flex-end;padding:12px 0;background:linear-gradient(0deg,rgba(11,12,16,.95),rgba(11,12,16,.0));backdrop-filter:blur(8px);border-top:1px solid var(--line);margin-top:10px}
+  .results{margin-top:18px;display:grid;grid-template-columns:1fr;gap:16px}
+  .bar{background:#0f1117;border:1px solid var(--line);border-radius:12px;padding:10px}
+  .bar h3{margin:0 0 8px;font-size:14px;color:var(--muted)}
+  .barrow{position:relative;height:26px;background:#0b0c10;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+  .segL{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--good),#41ead4)}
+  .segR{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(90deg,#ff9f1c,var(--accent2))}
+  .barlbl{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)}
+  .note{font-size:12px;color:var(--muted)}
+  .hidden{display:none}
+  .pill{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#0f1117;color:var(--muted);font-size:12px}
+  .mt8{margin-top:8px}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap toolbar">
+      <h1>마법 세계관 테스트 — 데모</h1>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="chip" id="qCountChip">문항: 0/0</span>
+        <button class="btn ghost" id="reshuffleBtn">랜덤 50 재추출</button>
+        <button class="btn primary" id="submitBtn">결과 보기</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="note">설명: 50개 문항이 매번 랜덤으로 출력돼. 응답은 1~5 (전혀 아님 → 적극 동의). 3은 축 점수에 영향을 주지 않고 각 축의 <em>중립 카운트</em>만 누적돼.</p>
+
+    <section id="quiz" class="grid"></section>
+
+    <div class="sticky-cta">
+      <span class="chip">응답 미선택은 자동으로 3(중립) 처리</span>
+      <button class="btn" id="toTopBtn">맨 위로</button>
+      <button class="btn primary" id="submitBtn2">결과 보기</button>
+    </div>
+
+    <section id="results" class="results hidden"></section>
+  </main>
+
+<script>
+// ===== 데이터 스키마 =====
+// axis: M(마법) / E(평등) / L(자유) / P(진보)
+// side 라벨: M: 친마법/반마법, E: 평등/권위, L: 자유/규제, P: 진보/보수
+// 응답 가중 배율: 1→-1.2, 2→-1.0, 3→neutral, 4→+1.0, 5→+1.2
+// 문항 강도 S: 0.8/1.0/1.2; 실제 가산치 = responseFactor * S * w
+
+const AXES = {
+  M: { left:"친마법", right:"반마법" },
+  E: { left:"평등", right:"권위" },
+  L: { left:"자유", right:"규제" },
+  P: { left:"진보", right:"보수" }
+};
+
+function oppositeSide(axis, side){
+  const a = AXES[axis];
+  if(!a) return side;
+  if(side === a.left) return a.right;
+  if(side === a.right) return a.left;
+  return side;
+}
+function sideToLR(axis, side){
+  const a = AXES[axis];
+  return (side === a.left) ? 'left' : 'right';
+}
+
+// ===== 50문항 (수정 반영 버전) =====
+// 형식: { id, text, S, effects: [{axis, side, w}, ...] }
+const QUESTIONS = [
+  // A-1) M 단일 (1~5)
+  {id:1, text:"마법은 학문으로 인정받아야 하며 장기적으로 인류 복지에 순효과를 낳는다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
+  {id:2, text:"마법은 결과적으로 사회에 해를 끼친다.", S:1.2, effects:[{axis:'M', side:'반마법', w:1.0}]},
+  {id:3, text:"충분히 검증 가능한 마법 원리의 연구는 허용되어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
+  {id:4, text:"마법은 예측 불가능성이 커서 연구 자체를 줄여야 한다.", S:1.0, effects:[{axis:'M', side:'반마법', w:1.0}]},
+  {id:5, text:"마법은 과학과 동등한 지적 전통으로 존중받아야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
+
+  // A-2) E 단일 (6~10)
+  {id:6, text:"모든 신분은 법 앞에서 동등해야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0}]},
+  {id:7, text:"사회의 안정에는 상층 엘리트의 지도가 필수적이다.", S:1.2, effects:[{axis:'E', side:'권위', w:1.0}]},
+  {id:8, text:"출신과 혈통은 공적 권리에서 우선 고려 요소가 되어야만 한다.", S:1.2, effects:[{axis:'E', side:'권위', w:1.0}]},
+  {id:9, text:"출신과 무관하게 공직 진출 기회가 주어져야 한다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0}]},
+  {id:10, text:"위계적 권위는 질서 유지에 도움이 될 때가 많다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0}]},
+
+  // A-3) L 단일 (11~15)
+  {id:11, text:"연구와 발명은 개인의 자유에 맡겨져야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0}]},
+  {id:12, text:"위험한 연구는 반드시 공적 허가 절차를 거쳐야 한다.", S:1.2, effects:[{axis:'L', side:'규제', w:1.0}]},
+  {id:13, text:"언론과 집회의 자유는 위기에서도 보장돼야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0}]},
+  {id:14, text:"공공 안전을 위해 개인의 권리를 제한할 때가 있다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0}]},
+  {id:15, text:"무규제 연구나 시장은 사회적 혼란을 초래할 가능성이 높다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0}]},
+
+  // A-4) P 단일 (16~20)
+  {id:16, text:"낡은 제도보다 개혁과 변화가 우선이다.", S:1.0, effects:[{axis:'P', side:'진보', w:1.0}]},
+  {id:17, text:"전통적 제도는 지금까지 유지된 분명한 이유가 있다.", S:1.2, effects:[{axis:'P', side:'보수', w:1.0}]},
+  {id:18, text:"변화 저항은 사회의 퇴보를 낳는다.", S:1.2, effects:[{axis:'P', side:'진보', w:1.0}]},
+  {id:19, text:"과거의 질서는 오늘날에도 유효한 기준을 제공한다.", S:1.0, effects:[{axis:'P', side:'보수', w:1.0}]},
+  {id:20, text:"급속한 개혁은 혼란을 키운다.", S:0.8, effects:[{axis:'P', side:'보수', w:1.0}]},
+
+  // B-1) M×E (21~25)
+  {id:21, text:"마법은 모든 계급에 개방돼야 한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'평등', w:0.8}]},
+  {id:22, text:"이론적 마법 교육이 현장에서 쓰이는 마법보다 낫다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'권위', w:0.8}]},
+  {id:23, text:"평등을 위해 마법 교육의 장벽을 낮춰야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:0.8},{axis:'E', side:'평등', w:1.0}]},
+  {id:24, text:"정규 교육을 받는 마법사만이 마법을 사용해야 한다.", S:0.8, effects:[{axis:'M', side:'친마법', w:0.6},{axis:'E', side:'권위', w:1.0}]},
+  {id:25, text:"공개 시험/자격제로 마법 접근을 공정화해야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'평등', w:0.6}]},
+
+  // B-2) M×L (26~30)
+  {id:26, text:"마법 연구는 누구나 자유롭게 시도할 수 있어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'L', side:'자유', w:0.6}]},
+  {id:27, text:"위험한 마법 연구의 경우는, 반드시 규제되어야 한다.", S:1.2, effects:[{axis:'M', side:'반마법', w:0.8},{axis:'L', side:'규제', w:1.0}]},
+  {id:28, text:"자율 규범만으로도 마법 안전을 지킬 수 있다.", S:0.8, effects:[{axis:'M', side:'친마법', w:0.8},{axis:'L', side:'자유', w:1.0}]},
+  {id:29, text:"마법 면허제는 안전한 마법 사용을 위해 필수적이다.", S:1.0, effects:[{axis:'M', side:'친마법', w:0.6},{axis:'L', side:'규제', w:1.0}]},
+  {id:30, text:"마법 지식의 공개가 혁신을 가속한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'L', side:'자유', w:0.8}]},
+
+  // B-3) M×P (31~35)
+  {id:31, text:"마법은 새로운 제도를 만들어낼 힘이어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:0.8},{axis:'P', side:'진보', w:1.0}]},
+  {id:32, text:"현재 마법 산업보다, 과거의 마법이 더 낫다.", S:1.0, effects:[{axis:'M', side:'반마법', w:0.8},{axis:'P', side:'보수', w:1.0}]},
+  {id:33, text:"개혁과 함께 마법 제도도 바뀌어야 한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:34, text:"마법 사용의 관습적 규칙은 지금 적용될 수 없다.", S:0.8, effects:[{axis:'M', side:'반마법', w:0.6},{axis:'P', side:'진보', w:1.0}]},
+  {id:35, text:"혁신적 마법 응용은 보수적 제도를 교체해야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'P', side:'진보', w:0.8}]},
+
+  // B-4) E×L (36~40)
+  {id:36, text:"자유는 평등을 위해 필수적이다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'자유', w:0.8}]},
+  {id:37, text:"평등을 위해 일부 자유의 제한이 불가피하다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.6}]},
+  {id:38, text:"자유가 없으면 평등도 공허하다.", S:0.8, effects:[{axis:'E', side:'평등', w:0.6},{axis:'L', side:'자유', w:1.0}]},
+  {id:39, text:"규제 강화가 불평등을 줄인다.", S:1.0, effects:[{axis:'E', side:'평등', w:0.8},{axis:'L', side:'규제', w:1.0}]},
+  {id:40, text:"권리장전 보장이 평등의 기초다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'자유', w:0.6}]},
+
+  // B-5) E×P (41~45)
+  {id:41, text:"사회 개혁은 불평등 해소를 목표로 해야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:42, text:"전통적 위계·질서를 지키는 일이 평등보다 우선이다.", S:1.0, effects:[{axis:'E', side:'권위', w:0.8},{axis:'P', side:'보수', w:1.0}]},
+  {id:43, text:"부의 재분배는 개혁의 핵심 과제이다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'P', side:'진보', w:0.8}]},
+  {id:44, text:"관습법과 작위를 존중할 수 있다.", S:0.8, effects:[{axis:'E', side:'권위', w:0.6},{axis:'P', side:'보수', w:1.0}]},
+  {id:45, text:"평등한 참정권 확대가 곧 개혁의 출발점이다.", S:1.0, effects:[{axis:'E', side:'평등', w:0.8},{axis:'P', side:'진보', w:1.0}]},
+
+  // B-6) L×P (46~50)
+  {id:46, text:"표현·결사의 자유는 개혁의 전제다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:47, text:"검열·치안 강화를 통해 전통 질서를 지켜야 한다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0},{axis:'P', side:'보수', w:0.6}]},
+  {id:48, text:"자유시장·자유연구가 사회 혁신을 낳는다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:49, text:"종교·전통 규범을 위해 자유를 제한할 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:0.8},{axis:'P', side:'보수', w:1.0}]},
+  {id:50, text:"시민적 자유 확대는 보수적 제도와도 양립 가능하다.", S:0.8, effects:[{axis:'L', side:'자유', w:0.8},{axis:'P', side:'보수', w:0.6}]},
+];
+
+// ===== 유틸 =====
+const RESP_FACTOR = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function sample50(){
+  const shuffled = shuffle(QUESTIONS);
+  return shuffled.slice(0, Math.min(50, shuffled.length));
+}
+
+// ===== 렌더 =====
+const quizEl = document.getElementById('quiz');
+const resultsEl = document.getElementById('results');
+const qCountChip = document.getElementById('qCountChip');
+let CURRENT = [];
+
+function renderQuiz(){
+  CURRENT = sample50();
+  quizEl.innerHTML = '';
+  CURRENT.forEach((q, idx)=>{
+    const id = `q_${q.id}`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="q">
+        <div class="qnum">${idx+1}</div>
+        <div class="qbody">
+          <p class="qtext">${q.text}</p>
+          <div class="opts" role="radiogroup" aria-labelledby="${id}">
+            ${[1,2,3,4,5].map(v=>{
+              const lbl = v===1?'전혀 아님':v===2?'대체로 아님':v===3?'중립/모르겠음':v===4?'대체로 동의':'적극 동의';
+              return `
+              <label class="opt">
+                <input type="radio" name="${id}" value="${v}" /> <span>${v}. ${lbl}</span>
+              </label>`;
+            }).join('')}
+          </div>
+          <div class="legend">
+            <span class="pill">강도 S=${q.S}</span>
+            ${q.effects.map(e=>`<span class="pill">${e.axis}: ${e.side} (w=${e.w})</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    quizEl.appendChild(card);
+  });
+  qCountChip.textContent = `문항: ${CURRENT.length}/${QUESTIONS.length}`;
+  resultsEl.classList.add('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== 채점 =====
+function score(){
+  // 축별 합산 구조
+  const sums = {
+    M:{left:0,right:0,neutral:0},
+    E:{left:0,right:0,neutral:0},
+    L:{left:0,right:0,neutral:0},
+    P:{left:0,right:0,neutral:0},
+  };
+
+  CURRENT.forEach(q=>{
+    const name = `q_${q.id}`;
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    const val = sel ? parseInt(sel.value,10) : 3; // 미응답은 3 처리
+    const f = RESP_FACTOR[val];
+
+    q.effects.forEach(e=>{
+      const lr = sideToLR(e.axis, e.side);
+      const oppLR = (lr==='left'?'right':'left');
+      if(val===3){
+        sums[e.axis].neutral += 1.0 * q.S * e.w;
+      }else if(f>0){
+        sums[e.axis][lr] += f * q.S * e.w;
+      }else if(f<0){
+        // 반대 측에 +
+        sums[e.axis][oppLR] += Math.abs(f) * q.S * e.w;
+      }
+    });
+  });
+
+  // 퍼센트 계산
+  const out = {};
+  Object.keys(sums).forEach(axis=>{
+    const {left,right,neutral} = sums[axis];
+    const totalLR = left + right;
+    let lp=50,rp=50;
+    if(totalLR>0){
+      lp = Math.round((left/totalLR)*1000)/10;
+      rp = Math.round((right/totalLR)*1000)/10;
+    }
+    const neutralRate = totalLR+neutral>0 ? Math.round((neutral/(totalLR+neutral))*1000)/10 : 0;
+    out[axis] = {left,right,neutral,lp,rp,neutralRate};
+  });
+  return out;
+}
+
+function renderResults(){
+  const s = score();
+  resultsEl.innerHTML = '';
+  const order = ['M','E','L','P'];
+  order.forEach(axis=>{
+    const a = AXES[axis];
+    const d = s[axis];
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.innerHTML = `
+      <h3>${axis} — <b>${a.left}</b> vs <b>${a.right}</b> <span class="pill mt8">중립률 ${d.neutralRate}%</span></h3>
+      <div class="barrow">
+        <div class="segL" style="width:${d.lp}%"></div>
+        <div class="segR" style="width:${d.rp}%"></div>
+      </div>
+      <div class="barlbl">
+        <span>${a.left} ${d.lp}%</span>
+        <span>${a.right} ${d.rp}%</span>
+      </div>
+    `;
+    resultsEl.appendChild(bar);
+  });
+  resultsEl.classList.remove('hidden');
+  window.scrollTo({top:resultsEl.offsetTop-20, behavior:'smooth'});
+}
+
+// ===== 이벤트 =====
+renderQuiz();
+
+document.getElementById('submitBtn').addEventListener('click', renderResults);
+document.getElementById?.('submitBtn2')?.addEventListener('click', renderResults);
+
+document.getElementById('reshuffleBtn').addEventListener('click', renderQuiz);
+
+document.getElementById('toTopBtn').addEventListener('click', ()=>{
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+</script>
+</body>
+</html>

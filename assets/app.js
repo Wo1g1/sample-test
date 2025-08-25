@@ -1,4 +1,4 @@
-/* ===== 설정 ===== */
+/* ===== 기본 설정 ===== */
 const AXES = {
   M:{left:"반마법", right:"친마법"},
   E:{left:"평등", right:"권위"},
@@ -7,21 +7,20 @@ const AXES = {
 };
 const RESP = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
 
-/* E-L-P 최종 명칭 (임시) */
+/* E-L-P 최종 명칭(임시) */
 const NAME_MAP = {
-  '좌-좌-좌':'혁명주의', '좌-좌-중도':'진보적 자유평등', '좌-좌-우':'자유보수주의',
-  '좌-중도-좌':'진보적 평등주의', '좌-중도-중도':'중도적 평등주의', '좌-중도-우':'평등적 자유보수주의',
-  '좌-우-좌':'사회주의', '좌-우-중도':'중도적 규제평등', '좌-우-우':'보수적 평등주의',
-  '중도-좌-좌':'자유평등 개혁주의', '중도-좌-중도':'자유평등 중도주의', '중도-좌-우':'자유보수 평등주의',
-  '중도-중도-좌':'중도적 개혁주의', '중도-중도-중도':'중도주의', '중도-중도-우':'중도적 보수주의',
-  '중도-우-좌':'진보적 규제주의', '중도-우-중도':'중도적 규제주의', '중도-우-우':'보수적 규제주의',
-  '우-좌-좌':'엘리트 개혁주의', '우-좌-중도':'엘리트 자유주의', '우-좌-우':'엘리트 자유보수',
-  '우-중도-좌':'보수적 평등개혁', '우-중도-중도':'중도적 권위주의', '우-중도-우':'권위적 보수주의',
-  '우-우-좌':'권위적 개혁주의', '우-우-중도':'권위적 규제주의', '우-우-우':'국가주의',
+  '좌-좌-좌':'혁명주의','좌-좌-중도':'진보적 자유평등','좌-좌-우':'자유보수주의',
+  '좌-중도-좌':'진보적 평등주의','좌-중도-중도':'중도적 평등주의','좌-중도-우':'평등적 자유보수주의',
+  '좌-우-좌':'사회주의','좌-우-중도':'중도적 규제평등','좌-우-우':'보수적 평등주의',
+  '중도-좌-좌':'자유평등 개혁주의','중도-좌-중도':'자유평등 중도주의','중도-좌-우':'자유보수 평등주의',
+  '중도-중도-좌':'중도적 개혁주의','중도-중도-중도':'중도주의','중도-중도-우':'중도적 보수주의',
+  '중도-우-좌':'진보적 규제주의','중도-우-중도':'중도적 규제주의','중도-우-우':'보수적 규제주의',
+  '우-좌-좌':'엘리트 개혁주의','우-좌-중도':'엘리트 자유주의','우-좌-우':'엘리트 자유보수',
+  '우-중도-좌':'보수적 평등개혁','우-중도-중도':'중도적 권위주의','우-중도-우':'권위적 보수주의',
+  '우-우-좌':'권위적 개혁주의','우-우-중도':'권위적 규제주의','우-우-우':'국가주의',
 };
 
-/* ===== 데모 문항(10개) — 동작 확인용 ===== */
-/* 너 질문지 붙일 땐 QUESTIONS 통째로 바꿔 넣어라 */
+/* ===== 데모 문항(10개) — 먼저 페이지 살리고 나중에 교체 ===== */
 const QUESTIONS = [
   {id:1,  text:"마법은 인류에 순효과다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1}]},
   {id:2,  text:"마법 연구는 줄여야 한다.", S:1.0, effects:[{axis:'M', side:'반마법', w:1}]},
@@ -35,10 +34,10 @@ const QUESTIONS = [
   {id:10, text:"무규제 연구는 위험하다.", S:1.0, effects:[{axis:'L', side:'규제', w:1}]},
 ];
 
-const PAGES = Math.ceil(QUESTIONS.length/10);
-const PER_PAGE = 10;
-
+/* ===== 전역 상태 ===== */
 let ORDERED=[], PAGES_DATA=[], ANSWERS={}, CUR=0;
+const PER_PAGE = 10;
+const PAGES = Math.ceil(QUESTIONS.length/PER_PAGE);
 
 /* ===== 유틸 ===== */
 function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
@@ -58,9 +57,6 @@ function initQuiz(){
   ANSWERS = {}; CUR=0;
 
   const chip=document.getElementById('stageChip'); if(chip) chip.textContent='진행 중';
-  const start=document.getElementById('start'); if(start){start.classList.add('hidden'); start.style.display='none';}
-  const res=document.getElementById('results'); if(res){res.classList.add('hidden'); res.innerHTML='';}
-  const resAct=document.getElementById('resultsActions'); if(resAct) resAct.classList.add('hidden');
   const wrap=document.getElementById('quizWrap'); if(wrap) wrap.classList.remove('hidden');
 
   renderPage();
@@ -124,9 +120,8 @@ function finishQuiz(){
     M: pickPerc(s.M), E: pickPerc(s.E), L: pickPerc(s.L), P: pickPerc(s.P)
   };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-  location.href = '../result/?s='+b64;
+  location.href = '../result/?s='+b64; // 폴더명 result(단수) 주의
 }
-
 function pickPerc(d){ return {
   lp_all:Math.round(d.lp_all), np_all:Math.round(d.np_all), rp_all:Math.round(d.rp_all)
 }; }
@@ -177,10 +172,7 @@ function buildResultTitle(s){
 /* ===== 결과 렌더 ===== */
 function renderResults(payload){
   const chip=document.getElementById('stageChip'); if(chip) chip.textContent='결과';
-  const wrap=document.getElementById('quizWrap'); if(wrap) wrap.classList.add('hidden');
-  const start=document.getElementById('start'); if(start){start.classList.add('hidden'); start.style.display='none';}
-
-  const s = payload || score();
+  const s = payload || (console.warn('공유 파라미터 없음 — 빈 렌더 시도'), score());
   const el=document.getElementById('results'); if(!el) return;
   el.innerHTML='';
   const order=['M','E','L','P'];
@@ -216,7 +208,24 @@ function renderResults(payload){
 document.addEventListener('DOMContentLoaded', ()=>{
   const isQuiz   = !!document.getElementById('quizWrap');
   const isResult = !!document.getElementById('results');
-  if (isQuiz)   initQuiz();
+
+  if (isQuiz){
+    initQuiz();
+    const finish=document.getElementById('finishBtn');
+    if (finish){
+      finish.addEventListener('click',(ev)=>{
+        ev.preventDefault();
+        if (!validateCurrentPage()) return;
+        collectCurrentPage();
+        finishQuiz();
+      });
+    }
+    const prev=document.getElementById('prevBtn');
+    if (prev) prev.addEventListener('click',e=>e.preventDefault());
+    const next=document.getElementById('nextBtn');
+    if (next) next.addEventListener('click',e=>e.preventDefault());
+  }
+
   if (isResult){
     const sp=new URLSearchParams(location.search);
     const b64=sp.get('s'); let data=null;

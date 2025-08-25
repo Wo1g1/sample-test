@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v9.2</title>
+<title>마법 세계관 테스트 — 데모 v9.3</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -91,7 +91,7 @@
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v9.2</h1>
+      <h1>마법 세계관 테스트 — 데모 v9.3</h1>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="chip" id="stageChip">시작 전</span>
       </div>
@@ -137,7 +137,7 @@
 
 <script>
 /* ===== 축/문항 데이터 ===== */
-const AXES = { M:{left:"친마법", right:"반마법"}, E:{left:"평등", right:"권위"}, L:{left:"자유", right:"규제"}, P:{left:"진보", right:"보수"} };
+const AXES = { M:{left:"반마법", right:"친마법"}, E:{left:"평등", right:"권위"}, L:{left:"자유", right:"규제"}, P:{left:"진보", right:"보수"} };
 const RESP_FACTOR = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
 
 // 조합 명칭 매핑(우리가 정한 명명법 일부 반영)
@@ -338,7 +338,7 @@ function decideSide(d){
   // 새 기준:
   // - 중립률 < 21%  && 좌우차 < 7%p  → 중도
   // - 중립률 ≥ 21% && 좌우차 < 14%p → 중도
-  const neutral = d.np_all;                      // 축별 중립률(%)
+  const neutral = d.np_all;                      // 중립 비율 (%)
   const diff = Math.abs(d.lp_all - d.rp_all);    // 좌/우 백분율 차이(%p)
 
   const isMiddle =
@@ -350,7 +350,9 @@ function decideSide(d){
 }
 function buildResultTitle(s){
   const m=decideSide(s.M), e=decideSide(s.E), l=decideSide(s.L), p=decideSide(s.P);
-  const mprefix = (m==='좌')?'친마법':(m==='우')?'반마법':'마법중립';
+  const mprefix = (m==='좌') ? '반마법'
+              : (m==='우') ? '친마법'
+              : '마법중립';
   const key = `${e}-${l}-${p}`;
   // 네 축 모두 중도면: 극단적 중도주의
   if (m==='중도' && e==='중도' && l==='중도' && p==='중도') return '극단적 중도주의';

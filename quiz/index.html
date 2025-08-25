@@ -1,12 +1,12 @@
-<!doctype html><html lang="ko"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>설문</title>
-<link rel="stylesheet" href="../assets/styles.css">
-</head><body>
-<main class="container" id="app">
-  <h1>설문</h1>
-  <div id="quiz-root"></div>
-  <div class="actions"><button id="submit" class="btn">결과 보기</button></div>
-</main>
-<script src="../assets/app.js"></script>
-</body></html>
+<section id="quizWrap" class="hidden">
+  <div class="card">
+    <div class="progressbar"><div id="prog" style="width:0%"></div></div>
+    <div id="quiz"></div>
+    <div class="pager">
+      <button class="btn" id="prevBtn">이전</button>
+      <span class="chip" id="pageInfo">1 / 5</span>
+      <button class="btn primary" id="nextBtn">다음</button>
+      <button class="btn primary hidden" id="finishBtn">결과 보기</button>
+    </div>
+  </div>
+</section>

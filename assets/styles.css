@@ -1,85 +1,43 @@
-<style>
-  :root{
-    --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
-    --good:#06d6a0;--good2:#41ead4; /* 좌측: 청록 → 하늘 */
-    --mid:#ffffff; /* 중립: 흰색 */
-    --warn:#ffd166;--warn2:#f77f00; /* 우측: 노랑 → 주홍 */
-    --line:#253045;--chip:#0e1117;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink)}
-  a{color:var(--accent);text-decoration:none}
-  .wrap{max-width:900px;margin:0 auto;padding:20px}
-  header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,12,16,.95),rgba(11,12,16,.5));backdrop-filter:blur(8px);z-index:10;border-bottom:1px solid var(--line)}
-  .toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 0}
-  h1{font-size:18px;margin:0}
-  .chip{background:var(--chip);border:1px solid var(--line);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:12px}
-  .btn{border:1px solid var(--line);background:#0f1117;color:var(--ink);padding:10px 12px;border-radius:12px;cursor:pointer}
-  .btn.primary{background:linear-gradient(90deg,var(--accent),#7bdff2);color:#081018}
-  .btn.ghost{background:#0b0c10}
-  .note{font-size:12px;color:var(--muted)}
+:root{
+  --bg:#0e0f12; --panel:#14161a; --text:#fff; --muted:#9aa3ad;
+  --accent:#2f7fe8; --left:#2fb36f; --mid:#bfc6cf; --right:#e85454;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,Malgun Gothic,sans-serif;line-height:1.6}
+a{color:var(--text);text-decoration:none}
+.hidden{display:none!important}
 
-  /* 카드/레이아웃 */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
-  .q{display:flex;gap:12px}
-  .qnum{flex:0 0 44px;height:44px;display:flex;align-items:center;justify-content:center;background:#0f1117;border:1px solid var(--line);border-radius:10px;color:var(--muted)}
-  .qbody{flex:1}
-  .qtext{margin:0 0 12px;font-weight:600;line-height:1.5}
-  /* 1~5 선택지를 한 줄 그리드로 */
-  .opts{
-    display:grid;
-    grid-template-columns:repeat(5, minmax(44px, 1fr));
-    gap:8px;
-    align-items:center;
-  }
-  .opt{
-    display:flex;
-    flex-direction:column; /* 숫자/라벨 세로 정렬 */
-    align-items:center;
-    gap:6px;
-  }
-.opt input{ margin:0 auto; accent-color:var(--accent); }
-  .opt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#0f1117;padding:8px 10px;border-radius:10px;cursor:pointer}
-  .opt input{accent-color:var(--accent)}
+.wrap.toolbar{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#111;z-index:10}
+.container{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--panel);border-radius:14px;padding:14px;margin:12px 0}
+.chip{font-size:12px;opacity:.8}
+.btn{background:#191b20;color:#fff;border:0;border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn.primary{background:var(--accent)}
 
-  /* 페이지 네비 */
-  .pager{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:12px}
-  .progressbar{height:8px;background:#0f1117;border:1px solid var(--line);border-radius:999px;overflow:hidden}
-  .progressbar > div{height:100%;background:linear-gradient(90deg,var(--accent),#7bdff2)}
+.note{color:var(--muted);font-size:14px}
+.hero ul{margin:0 0 0 18px;color:var(--muted)}
 
-  /* 결과 막대 */
-  .results{margin-top:18px;display:grid;grid-template-columns:1fr;gap:16px}
-  .bar{background:#0f1117;border:1px solid var(--line);border-radius:12px;padding:12px}
-  .bar h3{margin:0 0 10px;font-size:14px;color:var(--muted)}
-  .barrow{position:relative;height:34px;border-radius:10px;overflow:hidden;border:1px solid var(--line);
-    /* 그라데이션은 CSS 변수로 비율을 받아서 단일 선형 그라데이션으로 그림 */
-    --lp: 33;   /* 좌(%) */
-    --np: 34;   /* 중립(%) */
-    --blend: 5; /* 경계 스무딩 폭(%) */
- background: linear-gradient(90deg,
-   var(--good) 0%,
-   #7ff2e8  calc((var(--lp) - var(--blend)) * 1%), /* 더 밝은 청록 */
-   #f0fdff  calc(var(--lp) * 1%),                  /* 거의 흰색 */
-   #ffffff  calc((var(--lp) + var(--blend)) * 1%),
-      /* 중립 구간(흰색) */
-      #ffffff calc((var(--lp) + var(--blend)) * 1%),
-      #fff7e0  calc((var(--lp) + var(--np)) * 1%),    /* 미색 버퍼 */
-      /* 중→우 경계 스무딩 (흰색 → 미색 → 노랑) */
-      #fff6d6 calc((var(--lp) + var(--np)) * 1%),
-      var(--warn) calc((var(--lp) + var(--np) + var(--blend)) * 1%),
-      /* 우측: 노랑→주홍 */
-      var(--warn) calc((var(--lp) + var(--np) + var(--blend)) * 1%),
-      var(--warn2) 100%);
-  }
-  .barrow.no-neutral {
-  --blend: 0;
-  background: linear-gradient(90deg,
-    var(--good) 0%,
-    var(--good2) calc((var(--lp) - 1) * 1%),
-    #bff7ef   calc(var(--lp) * 1%),
-    #ffd982   calc((var(--lp) + 1) * 1%),
-    var(--warn)  calc((var(--lp) + 2) * 1%),
-    var(--warn2) 100%
-  );
-  }
+/* 설문 */
+.q{margin:14px 0}
+.qtext{margin:0 0 8px}
+.opts{
+  display:grid;
+  grid-template-columns:repeat(5, minmax(44px, 1fr));
+  gap:8px;align-items:center
+}
+.opt{display:flex;flex-direction:column;align-items:center;gap:6px}
+.opt input{display:none}
+.opt div{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#1a1c20}
+.opt input:checked + div{outline:2px solid #fff}
+.progressbar{height:8px;background:#23262b;border-radius:999px;overflow:hidden;margin:0 0 10px}
+#prog{height:8px;background:#fff}
+.pager-top,.pager-bottom{display:flex;align-items:center;justify-content:space-between;margin:6px 0}
+
+/* 결과 바 */
+.barrow{position:relative;height:32px;margin:8px 0}
+.baroverlay{display:flex;height:100%;border-radius:10px;overflow:hidden}
+.bar-left{background:linear-gradient(90deg, rgba(47,179,111,.9), rgba(47,179,111,.6))}
+.bar-mid{background:#d6dbe2;color:#111}
+.bar-right{background:linear-gradient(90deg, rgba(232,84,84,.6), rgba(232,84,84,.9))}
+.cell{display:flex;align-items:center;justify-content:center;font-size:12px}
+.barlbl{display:flex;justify-content:space-between;font-size:12px;margin-top:4px}

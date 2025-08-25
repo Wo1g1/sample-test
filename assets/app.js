@@ -1,4 +1,3 @@
-<script>
 /* ===== 축/문항 데이터 ===== */
 const AXES = { M:{left:"반마법", right:"친마법"}, E:{left:"평등", right:"권위"}, L:{left:"자유", right:"규제"}, P:{left:"진보", right:"보수"} };
 const RESP_FACTOR = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
@@ -310,4 +309,3 @@ document.getElementById('restartBtn').addEventListener('click', ()=>{
   document.getElementById('prog').style.width='0%';
   window.scrollTo({top:0, behavior:'smooth'});
 });
-</script>

@@ -309,3 +309,31 @@ document.getElementById('restartBtn').addEventListener('click', ()=>{
   document.getElementById('prog').style.width='0%';
   window.scrollTo({top:0, behavior:'smooth'});
 });
+document.addEventListener('DOMContentLoaded', () => {
+  const hasQuiz = !!document.getElementById('quizWrap');
+  const hasResult = !!document.getElementById('results');
+
+  if (hasQuiz) {
+    // 네 기존 함수명대로 호출: initQuiz 또는 renderQuiz 중 있는 걸로
+    if (typeof initQuiz === 'function') { initQuiz(); }
+    else if (typeof renderQuiz === 'function') { renderQuiz(); }
+  }
+
+  if (hasResult) {
+    // 공유 파라미터 s=?로 들어왔을 때 복원 (나중에 안 쓰면 이 블록은 무시)
+    const sp = new URLSearchParams(location.search);
+    const s = sp.get('s');
+    if (typeof renderResults === 'function') {
+      if (s) {
+        try {
+          const data = JSON.parse(decodeURIComponent(escape(atob(s))));
+          renderResults(data);
+        } catch { renderResults(); }
+      } else {
+        renderResults();
+      }
+    }
+    const restart = document.getElementById('restartBtn');
+    if (restart) restart.onclick = () => location.href = '../';
+  }
+});

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v5</title>
+<title>마법 세계관 테스트 — 데모 v6</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -49,17 +49,15 @@
     /* 그라데이션은 CSS 변수로 비율을 받아서 단일 선형 그라데이션으로 그림 */
     --lp: 33;   /* 좌(%) */
     --np: 34;   /* 중립(%) */
-    --blend: 4; /* 경계 스무딩 폭(%) */
-    background: linear-gradient(90deg,
-      /* 좌측: 청록→하늘 */
-      var(--good) 0%,
-      var(--good2) calc((var(--lp) - var(--blend)) * 1%),
-      /* 좌→중 경계 스무딩 (담청 → 흰색) */
-      #dff7ff calc(var(--lp) * 1%),
-      #ffffff calc((var(--lp) + var(--blend)) * 1%),
+    --blend: 5; /* 경계 스무딩 폭(%) */
+ background: linear-gradient(90deg,
+   var(--good) 0%,
+   #7ff2e8  calc((var(--lp) - var(--blend)) * 1%), /* 더 밝은 청록 */
+   #f0fdff  calc(var(--lp) * 1%),                  /* 거의 흰색 */
+   #ffffff  calc((var(--lp) + var(--blend)) * 1%),
       /* 중립 구간(흰색) */
       #ffffff calc((var(--lp) + var(--blend)) * 1%),
-      #ffffff calc((var(--lp) + var(--np) - var(--blend)) * 1%),
+      #fff7e0  calc((var(--lp) + var(--np)) * 1%),    /* 미색 버퍼 */
       /* 중→우 경계 스무딩 (흰색 → 미색 → 노랑) */
       #fff6d6 calc((var(--lp) + var(--np)) * 1%),
       var(--warn) calc((var(--lp) + var(--np) + var(--blend)) * 1%),
@@ -133,16 +131,42 @@ const RESP_FACTOR = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
 // 조합 명칭 매핑(우리가 정한 명명법 일부 반영)
 // key는 'E-L-P' 순서로 '좌/중도/우' 문자열
 const NAME_MAP = {
+  // (E,L,P)
   '좌-좌-좌': '혁명주의',
+  '좌-좌-중도': '진보적 자유평등',
   '좌-좌-우': '자유보수주의',
-  '좌-중도-우': '평등적 자유보수주의',
-  '우-우-우': '국가주의',
+
+  '좌-중도-좌': '진보적 평등주의',
   '좌-중도-중도': '중도적 평등주의',
-  '우-중도-중도': '중도적 권위주의',
+  '좌-중도-우': '평등적 자유보수주의',
+
+  '좌-우-좌': '사회주의',
+  '좌-우-중도': '평등적 규제주의',
+  '좌-우-우': '보수적 평등주의',
+
+  '중도-좌-좌': '진보적 자유주의',
   '중도-좌-중도': '중도적 자유주의',
-  '중도-우-중도': '중도적 규제주의',
+  '중도-좌-우': '보수적 자유주의',
+
   '중도-중도-좌': '중도적 진보주의',
-  '중도-중도-우': '중도적 보수주의'
+  '중도-중도-중도': '중도주의',               // (참고: M까지 중도면 buildResultTitle에서 “극단적 중도주의”로 표시)
+  '중도-중도-우': '중도적 보수주의',
+
+  '중도-우-좌': '진보적 규제주의',
+  '중도-우-중도': '중도적 규제주의',
+  '중도-우-우': '보수적 규제주의',
+
+  '우-좌-좌': '엘리트 개혁주의',
+  '우-좌-중도': '엘리트 자유주의',
+  '우-좌-우': '엘리트 자유보수',
+
+  '우-중도-좌': '보수적 평등개혁',             // 필요하면 명칭 바꿔
+  '우-중도-중도': '중도적 권위주의',
+  '우-중도-우': '권위적 보수주의',
+
+  '우-우-좌': '권위적 개혁주의',
+  '우-우-중도': '권위적 규제주의',
+  '우-우-우': '국가주의'
 };
 
 const QUESTIONS = [
@@ -277,14 +301,20 @@ function score(){
   });
   return out;
 }
-function decideSide(d){ const diff=Math.abs(d.lp_lr-d.rp_lr); const neutralHigh=d.np_all>=30; const neutralLow=d.np_all<30; if((neutralLow&&diff<5)||(neutralHigh&&diff<10)) return '중도'; return d.lp_lr>=d.rp_lr?'좌':'우'; }
+  function decideSide(d){
+    const DIFF_THRESH = 10; // 퍼센트포인트 기준
+    const diff = Math.abs(d.lp_all - d.rp_all); // 그래프 표시 퍼센트 기준
+    if (diff < DIFF_THRESH) return '중도';
+    return d.lp_all >= d.rp_all ? '좌' : '우';
+  }
 function buildResultTitle(s){
   const m=decideSide(s.M), e=decideSide(s.E), l=decideSide(s.L), p=decideSide(s.P);
   const mprefix = (m==='좌')?'친마법':(m==='우')?'반마법':'마법중립';
   const key = `${e}-${l}-${p}`;
-  // 극단적 중도주의 규칙
-  if(m==='중도' && e==='중도' && l==='중도' && p==='중도') return '극단적 중도주의';
-  const tri = NAME_MAP[key] || `${e==='좌'?'평등주의':e==='우'?'권위주의':'중도적 평등/권위'} · ${l==='좌'?'자유주의':l==='우'?'규제주의':'중도적 자유/규제'} · ${p==='좌'?'진보주의':p==='우'?'보수주의':'중도적 진보/보수'}`;
+  // 네 축 모두 중도면: 극단적 중도주의
+  if (m==='중도' && e==='중도' && l==='중도' && p==='중도') return '극단적 중도주의';
+  // 반드시 매핑 이름만 사용(축별 나열 금지)
+  const tri = NAME_MAP[key] || '중도주의(임시)';
   return `${mprefix} · ${tri}`;
 }
 
@@ -303,7 +333,7 @@ function renderResults(){
   order.forEach(axis=>{ const meta=AXES[axis]; const d=s[axis];
     const bar=document.createElement('div'); bar.className='bar';
     bar.innerHTML=`
-      <h3>${axis} — <b>${meta.left}</b> vs <b>${meta.right}</b> <span class="chip">좌/우: ${d.lp_lr}% / ${d.rp_lr}%</span></h3>
+      <h3>${axis} — <b>${meta.left}</b> vs <b>${meta.right}</b></h3>
       <div class="barrow">
         <div class="baroverlay">
           <div class="cell" style="width:${d.lp_all}%">${d.lp_all?`${d.lp_all}%`:''}</div>
@@ -314,7 +344,7 @@ function renderResults(){
       <div class="barlbl"><span>${meta.left}</span><span>중립</span><span>${meta.right}</span></div>`;
     const barrow = bar.querySelector('.barrow');
     // CSS 변수에 비율/블렌드 주입
-    const blend = Math.max(0.6, Math.min(2.0, d.np_all/2));
+    const blend = 5; // 고정 5%로 더 부드럽게
     barrow.style.setProperty('--lp', d.lp_all);
     barrow.style.setProperty('--np', d.np_all);
     barrow.style.setProperty('--blend', blend);

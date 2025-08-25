@@ -1,12 +1,36 @@
-<section id="quizWrap">
-  <div class="card">
-    <div class="progressbar"><div id="prog" style="width:0%"></div></div>
-    <div id="quiz"></div>
-    <div class="pager">
-      <button class="btn" id="prevBtn">이전</button>
-      <span class="chip" id="pageInfo">1 / 5</span>
-      <button class="btn primary" id="nextBtn">다음</button>
-      <button class="btn primary hidden" id="finishBtn">결과 보기</button>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>설문 | 세계관 정치 성향 테스트</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="wrap toolbar">
+      <h1>마법 세계관 테스트 — 데모 v9.4</h1>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="chip" id="stageChip">시작 전</span>
+      </div>
     </div>
-  </div>
-</section>
+  </header>
+
+  <main class="container" id="app">
+    <section id="quizWrap">
+      <div class="card">
+        <div class="progressbar"><div id="prog" style="width:0%"></div></div>
+        <div id="quiz"></div>
+        <div class="pager">
+          <button class="btn" id="prevBtn">이전</button>
+          <span class="chip" id="pageInfo">1 / 5</span>
+          <button class="btn primary" id="nextBtn">다음</button>
+          <button class="btn primary hidden" id="finishBtn">결과 보기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/app.js"></script>
+</body>
+</html>

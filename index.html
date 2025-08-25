@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v7</title>
+<title>마법 세계관 테스트 — 데모 v7.1</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -75,10 +75,12 @@
     var(--warn)  calc((var(--lp) + 2) * 1%),
     var(--warn2) 100%
   );
+  }
   .baroverlay{position:absolute;inset:0;display:flex;color:#fff;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.7)}
   .cell{display:flex;align-items:center;justify-content:center}
   .barlbl{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)}
   .hidden{display:none}
+  .hidden{display:none !important}
 
   /* 히어로(시작 페이지) */
   .hero{display:grid;gap:16px;margin-top:16px}
@@ -89,7 +91,7 @@
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v7</h1>
+      <h1>마법 세계관 테스트 — 데모 v7.1</h1>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="chip" id="stageChip">시작 전</span>
       </div>

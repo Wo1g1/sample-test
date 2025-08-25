@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v6</title>
+<title>마법 세계관 테스트 — 데모 v7</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -65,6 +65,16 @@
       var(--warn) calc((var(--lp) + var(--np) + var(--blend)) * 1%),
       var(--warn2) 100%);
   }
+  .barrow.no-neutral {
+  --blend: 0;
+  background: linear-gradient(90deg,
+    var(--good) 0%,
+    var(--good2) calc((var(--lp) - 1) * 1%),
+    #bff7ef   calc(var(--lp) * 1%),
+    #ffd982   calc((var(--lp) + 1) * 1%),
+    var(--warn)  calc((var(--lp) + 2) * 1%),
+    var(--warn2) 100%
+  );
   .baroverlay{position:absolute;inset:0;display:flex;color:#fff;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.7)}
   .cell{display:flex;align-items:center;justify-content:center}
   .barlbl{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)}
@@ -79,7 +89,7 @@
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v6</h1>
+      <h1>마법 세계관 테스트 — 데모 v7</h1>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="chip" id="stageChip">시작 전</span>
       </div>
@@ -348,6 +358,7 @@ function renderResults(){
     barrow.style.setProperty('--lp', d.lp_all);
     barrow.style.setProperty('--np', d.np_all);
     barrow.style.setProperty('--blend', blend);
+    barrow.classList.toggle('no-neutral', d.np_all <= 0.1); // 중립 거의 0%면 흰색 제거
     resultsEl.appendChild(bar);
   });
   resultsEl.classList.remove('hidden');

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v9.3</title>
+<title>마법 세계관 테스트 — 데모 v9.4</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -32,7 +32,20 @@
   .qnum{flex:0 0 44px;height:44px;display:flex;align-items:center;justify-content:center;background:#0f1117;border:1px solid var(--line);border-radius:10px;color:var(--muted)}
   .qbody{flex:1}
   .qtext{margin:0 0 12px;font-weight:600;line-height:1.5}
-  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  /* 1~5 선택지를 한 줄 그리드로 */
+  .opts{
+    display:grid;
+    grid-template-columns:repeat(5, minmax(44px, 1fr));
+    gap:8px;
+    align-items:center;
+  }
+  .opt{
+    display:flex;
+    flex-direction:column; /* 숫자/라벨 세로 정렬 */
+    align-items:center;
+    gap:6px;
+  }
+.opt input{ margin:0 auto; accent-color:var(--accent); }
   .opt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#0f1117;padding:8px 10px;border-radius:10px;cursor:pointer}
   .opt input{accent-color:var(--accent)}
 
@@ -86,12 +99,13 @@
   .hero{display:grid;gap:16px;margin-top:16px}
   .hero h2{margin:0;font-size:20px}
   .hero ul{margin:0 0 0 18px;color:var(--muted)}
+  
 </style>
 </head>
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v9.3</h1>
+      <h1>마법 세계관 테스트 — 데모 v9.4</h1>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="chip" id="stageChip">시작 전</span>
       </div>
@@ -371,7 +385,8 @@ function renderResults(){
   const order=['M','E','L','P'];
   const title=buildResultTitle(s);
   const titleCard=document.createElement('div'); titleCard.className='card';
-  titleCard.innerHTML=`<h2 style="margin:0 0 6px">${title}</h2><p class="note" style="margin:0">축별 비율(좌/중립/우)과 좌·우만 비교한 백분율을 함께 보여준다.</p>`;
+  // 축별 비율(좌/중립/우)과 좌·우만 비교한 백분율을 함께 보여준다.
+titleCard.innerHTML=`<h2 style="margin:0 0 6px">${title}</h2>`;
   resultsEl.appendChild(titleCard);
   order.forEach(axis=>{ const meta=AXES[axis]; const d=s[axis];
     const bar=document.createElement('div'); bar.className='bar';
@@ -384,7 +399,7 @@ function renderResults(){
           <div class="cell" style="width:${d.rp_all}%">${d.rp_all?`${d.rp_all}%`:''}</div>
         </div>
       </div>
-      <div class="barlbl"><span>${meta.left}</span><span>중립</span><span>${meta.right}</span></div>`;
+      <div class="barlbl"><span>${meta.left}</span><span>${meta.right}</span></div>`;
     const barrow = bar.querySelector('.barrow');
     // CSS 변수에 비율/블렌드 주입
     const blend = 5; // 고정 5%로 더 부드럽게

@@ -1,42 +1,27 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v10</title>
-<link rel="stylesheet" href="./assets/styles.css">
-  .baroverlay{position:absolute;inset:0;display:flex;color:#fff;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.7)}
-  .cell{display:flex;align-items:center;justify-content:center}
-  .barlbl{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)}
-  .hidden{display:none}
-  .hidden{display:none !important}
-
-  /* 히어로(시작 페이지) */
-  .hero{display:grid;gap:16px;margin-top:16px}
-  .hero h2{margin:0;font-size:20px}
-  .hero ul{margin:0 0 0 18px;color:var(--muted)}
-  
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>세계관 정치 성향 테스트 - 데모 v11</title>
+  <link rel="stylesheet" href="./assets/styles.css">
 </head>
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v10</h1>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span class="chip" id="stageChip">시작 전</span>
-      </div>
+      <h1>세계관 정치 성향 테스트</h1>
+      <div><span class="chip" id="stageChip">시작 전</span></div>
     </div>
   </header>
 
-  <main class="wrap" id="app">
-    <!-- 시작 페이지 -->
+  <main class="container" id="app">
     <section id="start" class="hero">
       <div class="card">
         <h2>시작하기</h2>
-        <p class="note">총 50문항, 5페이지(페이지당 10문항). 매 접속 시 문항 순서가 무작위로 섞인다. 응답 1~5 중 <b>3(중립/모름)</b>은 점수에 반영되지 않고 <b>축별 중립률</b>만 계산된다.</p>
+        <p class="note">총 50문항, 페이지당 10문항. 문항 순서는 섞임. 응답 1~5 (3=중립/모름).</p>
         <ul>
           <li>1 = 전혀 아님, 2 = 대체로 아님, 3 = 중립/모름, 4 = 대체로 동의, 5 = 적극 동의</li>
-          <li>모든 항목은 익명·로컬 계산, 네트워크 전송 없음</li>
+          <li>모든 항목은 익명·로컬 계산. 네트워크 전송 없음</li>
         </ul>
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
           <a class="btn primary" href="./quiz/">테스트 시작</a>

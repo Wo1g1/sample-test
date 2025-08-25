@@ -3,16 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>설문 | 세계관 정치 성향 테스트</title>
+  <title>설문 | 세계관 정치 성향 테스트 - 데모 v11</title>
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>세계관 정치 성향 테스트</h1>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span class="chip" id="stageChip">시작 전</span>
-      </div>
+      <h1>세계관 정치 성향 테스트 - 데모 v11</h1>
+      <div><span class="chip" id="stageChip">진행 중</span></div>
     </div>
   </header>
 
@@ -20,12 +18,21 @@
     <section id="quizWrap">
       <div class="card">
         <div class="progressbar"><div id="prog" style="width:0%"></div></div>
-        <div id="quiz"></div>
-        <div class="pager">
+        <div class="pager-top">
           <button class="btn" id="prevBtn">이전</button>
-          <span class="chip" id="pageInfo">1 / 5</span>
-          <button class="btn primary" id="nextBtn">다음</button>
+          <span class="chip" id="pageInfo">1 / 1</span>
+          <span></span>
+          <button class="btn" id="nextBtn">다음</button>
           <button class="btn primary hidden" id="finishBtn">결과 보기</button>
+        </div>
+
+        <div id="quiz"></div>
+
+        <div class="pager-bottom">
+          <button class="btn" id="prevBtn2">이전</button>
+          <span class="chip" id="pageInfo2">1 / 1</span>
+          <button class="btn" id="nextBtn2">다음</button>
+          <button class="btn primary hidden" id="finishBtn2">결과 보기</button>
         </div>
       </div>
     </section>

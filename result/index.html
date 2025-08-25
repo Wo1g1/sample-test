@@ -1,14 +1,29 @@
-<!doctype html><html lang="ko"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>결과</title>
-<link rel="stylesheet" href="../assets/styles.css">
-</head><body>
-<main class="container">
-  <div id="title-card"></div>
-  <div id="bars"></div>
-  <div class="actions">
-    <a class="btn" href="../quiz/">다시 테스트</a>
-  </div>
-</main>
-<script src="../assets/app.js"></script>
-</body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>결과 | 세계관 정치 성향 테스트</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="wrap toolbar">
+      <h1>마법 세계관 테스트 — 데모 v9.4</h1>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="chip" id="stageChip">결과</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 결과 섹션 -->
+    <section id="results" class="results"></section>
+    <div id="resultsActions" style="margin-top:10px;display:flex;gap:10px;justify-content:flex-end">
+      <a class="btn" href="../">처음으로</a>
+    </div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+</body>
+</html>

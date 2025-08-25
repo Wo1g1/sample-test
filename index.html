@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v7.1</title>
+<title>마법 세계관 테스트 — 데모 v8</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -91,7 +91,7 @@
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v7.1</h1>
+      <h1>마법 세계관 테스트 — 데모 v8</h1>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="chip" id="stageChip">시작 전</span>
       </div>
@@ -287,11 +287,29 @@ function renderPage(){
   document.getElementById('finishBtn').classList.toggle('hidden', CUR!==PAGES-1);
 }
 
+  function validateCurrentPage() {
+  const list = PAGES_DATA[CUR];
+  for (const q of list) {
+    const name = `q_${q.id}`;
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    if (!sel) {
+      const card = document.querySelector(`input[name="${name}"]`)?.closest('.card');
+      return { ok: false, card };
+    }
+  }
+  return { ok: true, card: null };
+}
+
 /* ===== 응답/채점 ===== */
 function sideToLR(axis, side){ const a=AXES[axis]; return (side===a.left)?'left':'right'; }
 function collectCurrentPage(){
   const list = PAGES_DATA[CUR];
   list.forEach(q=>{ const name = `q_${q.id}`; const sel = document.querySelector(`input[name=\"${name}\"]:checked`); ANSWERS[q.id] = sel ? parseInt(sel.value,10) : 3; });
+  list.forEach(q=>{
+    const name = `q_${q.id}`;
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    if (sel) ANSWERS[q.id] = parseInt(sel.value,10);
+  }); 
 }
 function score(){
   const sums = { M:{left:0,right:0,neutral:0}, E:{left:0,right:0,neutral:0}, L:{left:0,right:0,neutral:0}, P:{left:0,right:0,neutral:0} };
@@ -371,11 +389,35 @@ function renderResults(){
 /* ===== 이벤트 ===== */
 document.getElementById('startBtn').addEventListener('click', ()=>{ initQuiz(); });
 
-document.getElementById('prevBtn').addEventListener('click', ()=>{ collectCurrentPage(); CUR=Math.max(0,CUR-1); renderPage(); });
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  const v = validateCurrentPage();
+  if (!v.ok) {
+    alert('이 페이지의 모든 문항에 응답해줘.');
+    v.card?.classList.add('need');
+    v.card?.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(()=> v.card?.classList.remove('need'), 1200);
+    return;
+  }
+  collectCurrentPage();
+  CUR = Math.min(PAGES-1, CUR+1);
+  renderPage();
+});
 
 document.getElementById('nextBtn').addEventListener('click', ()=>{ collectCurrentPage(); CUR=Math.min(PAGES-1,CUR+1); renderPage(); });
 
-document.getElementById('finishBtn').addEventListener('click', ()=>{ collectCurrentPage(); renderResults(); });
+document.getElementById('finishBtn').addEventListener('click', ()=>{
+  const v = validateCurrentPage();
+  if (!v.ok) {
+    alert('이 페이지의 모든 문항에 응답해줘.');
+    v.card?.classList.add('need');
+    v.card?.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(()=> v.card?.classList.remove('need'), 1200);
+    return;
+  }
+  collectCurrentPage();
+  renderResults();
+  
+});
 
 document.getElementById('restartBtn').addEventListener('click', ()=>{
   ANSWERS={}; ORDERED=[]; PAGES_DATA=[]; CUR=0;

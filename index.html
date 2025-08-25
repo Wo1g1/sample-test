@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>마법 세계관 테스트 — 데모 v9.1</title>
+<title>마법 세계관 테스트 — 데모 v9.2</title>
 <style>
   :root{
     --bg:#0b0c10;--panel:#14161c;--ink:#e8ecf1;--muted:#a7b0bd;--accent:#5aa9e6;--accent2:#ef476f;
@@ -91,7 +91,7 @@
 <body>
   <header>
     <div class="wrap toolbar">
-      <h1>마법 세계관 테스트 — 데모 v9.1</h1>
+      <h1>마법 세계관 테스트 — 데모 v9.2</h1>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="chip" id="stageChip">시작 전</span>
       </div>
@@ -145,8 +145,8 @@ const RESP_FACTOR = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
 const NAME_MAP = {
   // (E,L,P)
   '좌-좌-좌': '혁명주의',
-  '좌-좌-중도': '진보적 자유평등',
-  '좌-좌-우': '자유보수주의',
+  '좌-좌-중도': '자유평등주의',
+  '좌-좌-우': '보수적 평등주의',
 
   '좌-중도-좌': '진보적 평등주의',
   '좌-중도-중도': '중도적 평등주의',
@@ -154,7 +154,7 @@ const NAME_MAP = {
 
   '좌-우-좌': '사회주의',
   '좌-우-중도': '평등적 규제주의',
-  '좌-우-우': '보수적 평등주의',
+  '좌-우-우': '보수적 사회주의',
 
   '중도-좌-좌': '진보적 자유주의',
   '중도-좌-중도': '중도적 자유주의',
@@ -170,11 +170,11 @@ const NAME_MAP = {
 
   '우-좌-좌': '엘리트 개혁주의',
   '우-좌-중도': '엘리트 자유주의',
-  '우-좌-우': '엘리트 자유보수',
+  '우-좌-우': '자유보수주의',
 
   '우-중도-좌': '보수적 평등개혁',             // 필요하면 명칭 바꿔
   '우-중도-중도': '중도적 권위주의',
-  '우-중도-우': '권위적 보수주의',
+  '우-중도-우': '진보적 국가주의',
 
   '우-우-좌': '권위적 개혁주의',
   '우-우-중도': '권위적 규제주의',
@@ -333,12 +333,21 @@ function score(){
   });
   return out;
 }
-  function decideSide(d){
-    const DIFF_THRESH = 10; // 퍼센트포인트 기준
-    const diff = Math.abs(d.lp_all - d.rp_all); // 그래프 표시 퍼센트 기준
-    if (diff < DIFF_THRESH) return '중도';
-    return d.lp_all >= d.rp_all ? '좌' : '우';
-  }
+function decideSide(d){
+  // d: { lp_all, np_all, rp_all, ... }
+  // 새 기준:
+  // - 중립률 < 21%  && 좌우차 < 7%p  → 중도
+  // - 중립률 ≥ 21% && 좌우차 < 14%p → 중도
+  const neutral = d.np_all;                      // 축별 중립률(%)
+  const diff = Math.abs(d.lp_all - d.rp_all);    // 좌/우 백분율 차이(%p)
+
+  const isMiddle =
+    (neutral < 21 && diff < 7) ||
+    (neutral >= 21 && diff < 14);
+
+  if (isMiddle) return '중도';
+  return d.lp_all >= d.rp_all ? '좌' : '우';
+}
 function buildResultTitle(s){
   const m=decideSide(s.M), e=decideSide(s.E), l=decideSide(s.L), p=decideSide(s.P);
   const mprefix = (m==='좌')?'친마법':(m==='우')?'반마법':'마법중립';

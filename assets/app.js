@@ -90,6 +90,22 @@ function sideToLR(axis, side){
 
 /* ===== 퀴즈 ===== */
 function initQuiz(){
+  ORDERED = shuffle(QUESTIONS);
+  PAGES   = Math.max(1, Math.ceil(ORDERED.length / PER_PAGE));
+
+  PAGES_DATA = [];
+  for (let i=0;i<PAGES;i++){
+    PAGES_DATA.push(ORDERED.slice(i*PER_PAGE, (i+1)*PER_PAGE));
+  }
+
+  ANSWERS = {};
+  CUR = 0;
+
+  const wrap = document.getElementById('quizWrap');
+  if (wrap) wrap.classList.remove('hidden');
+  renderPage();
+}
+
 function updatePageUI(){
   const pageInfo=document.getElementById('pageInfo');
   const prevBtn   = document.getElementById('prevBtn');
@@ -118,12 +134,14 @@ function updatePageUI(){
   if (finishBtn)  finishBtn.onclick  = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
   if (finishBtn2) finishBtn2.onclick = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
 }
-};
 function renderPage(){
   const quizEl = document.getElementById('quiz');
   const pageInfo = document.getElementById('pageInfo');
   const prog = document.getElementById('prog');
-  const list = PAGES_DATA[CUR];
+  let list = (PAGES_DATA[CUR] && PAGES_DATA[CUR].length)
+  ? PAGES_DATA[CUR]
+  : ORDERED.slice(CUR*PER_PAGE, (CUR+1)*PER_PAGE);
+
   quizEl.innerHTML = '';
   
   // ★ 보정: 현재 페이지 배열이 비거나 undefined면 재구성

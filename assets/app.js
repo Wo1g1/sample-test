@@ -1,14 +1,17 @@
 /* ===== 설정 ===== */
-const AXES = {
+var AXES = window.AXES || {
   M:{left:"반마법", right:"친마법"},
   E:{left:"평등",  right:"권위"},
   L:{left:"자유",  right:"규제"},
   P:{left:"진보",  right:"보수"},
-};
-const RESP = {1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2};
+}; window.AXES = AXES;
+
+var RESP = window.RESP || {
+  1:-1.2, 2:-1.0, 3:0, 4:+1.0, 5:+1.2
+}; window.RESP = RESP;
 
 /* 이름 맵(임시) — E-L-P 조합 */
-const NAME_MAP = {
+var NAME_MAP = window.NAME_MAP || {
   '좌-좌-좌':'혁명주의','좌-좌-중도':'진보적 자유평등','좌-좌-우':'자유보수주의',
   '좌-중도-좌':'진보적 평등주의','좌-중도-중도':'중도적 평등주의','좌-중도-우':'평등적 자유보수주의',
   '좌-우-좌':'사회주의','좌-우-중도':'중도적 규제평등','좌-우-우':'보수적 평등주의',
@@ -18,9 +21,9 @@ const NAME_MAP = {
   '우-좌-좌':'엘리트 개혁주의','우-좌-중도':'엘리트 자유주의','우-좌-우':'엘리트 자유보수',
   '우-중도-좌':'보수적 평등개혁','우-중도-중도':'중도적 권위주의','우-중도-우':'권위적 보수주의',
   '우-우-좌':'권위적 개혁주의','우-우-중도':'권위적 규제주의','우-우-우':'국가주의',
-};
+}; window.NAME_MAP = NAME_MAP;
 
-const QUESTIONS = [
+var QUESTIONS = window.QUESTIONS ||  [
   {id:1, text:"마법은 학문으로 인정받아야 하며 장기적으로 인류 복지에 순효과를 낳는다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
   {id:2, text:"마법은 결과적으로 사회에 해를 끼친다.", S:1.2, effects:[{axis:'M', side:'반마법', w:1.0}]},
   {id:3, text:"충분히 검증 가능한 마법 원리의 연구는 허용되어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
@@ -71,7 +74,7 @@ const QUESTIONS = [
   {id:48, text:"자유시장·자유연구가 사회 혁신을 낳는다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'P', side:'진보', w:0.6}]},
   {id:49, text:"종교·전통 규범을 위해 자유를 제한할 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:0.8},{axis:'P', side:'보수', w:1.0}]},
   {id:50, text:"시민적 자유 확대는 보수적 제도와도 양립 가능하다.", S:0.8, effects:[{axis:'L', side:'자유', w:0.8},{axis:'P', side:'보수', w:0.6}]},
-];
+]; window.QUESTIONS = QUESTIONS;
 
 /* ===== 전역 상태 ===== */
 const PER_PAGE = 10;
@@ -156,6 +159,7 @@ function renderPage(){
       </div>`;
     quizEl.appendChild(card);
   });
+  
   // --- 페이지 정보/프로그레스 ---
   const pageInfo = document.getElementById('pageInfo');
   const prog     = document.getElementById('prog');
@@ -199,11 +203,11 @@ function renderPage(){
 }
 
 function validateCurrentPage(){
-  const list = PAGES_DATA[CUR] || [];
-  for (const q of list){
-    const picked = document.querySelector(`input[name="q_${q.id}"]:checked`);
-    if (!picked){
-      alert('모든 문항을 모두 선택해 주세요.');
+  // 현재 화면(#quiz) 안에 있는 문항 그룹만 검사
+  const groups = Array.from(document.querySelectorAll('#quiz .opts'));
+  for (const g of groups){
+    if (!g.querySelector('input[type="radio"]:checked')){
+      alert('이 페이지 문항을 모두 선택해야 넘어갈 수 있어.');
       return false;
     }
   }

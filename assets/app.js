@@ -106,34 +106,7 @@ function initQuiz(){
   renderPage();
 }
 
-function updatePageUI(){
-  const pageInfo=document.getElementById('pageInfo');
-  const prevBtn   = document.getElementById('prevBtn');
-  const nextBtn   = document.getElementById('nextBtn');
-  const finishBtn = document.getElementById('finishBtn');
 
-  if (prevBtn)  prevBtn.onclick  = (e)=>{ e.preventDefault(); if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); } };
-  if (nextBtn)  nextBtn.onclick  = (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); CUR++; renderPage(); };
-  if (finishBtn)finishBtn.onclick= (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); finishQuiz(); };
-
-  if (pageInfo)  pageInfo.textContent  = `${CUR+1} / ${PAGES}`;
-  if (prog) prog.style.width = `${Math.round(((CUR)/PAGES)*100)}%`;
-
-  const isLast = CUR === PAGES-1;
-  [nextBtn,nextBtn2].forEach(b=>b && b.classList.toggle('hidden', isLast));
-  [finishBtn,finishBtn2].forEach(b=>b && b.classList.toggle('hidden', !isLast));
-
-  if (prevBtn)  prevBtn.disabled  = CUR===0;
-  if (prevBtn2) prevBtn2.disabled = CUR===0;
-
-  // 이벤트(중복 바인딩 방지 위해 매번 재설정)
-  if (prevBtn)  prevBtn.onclick  = ()=>{ if (CUR>0){ collectCurrentPage(); CUR--; updatePageUI(); renderPage(); } };
-  if (prevBtn2) prevBtn2.onclick = ()=>{ if (CUR>0){ collectCurrentPage(); CUR--; updatePageUI(); renderPage(); } };
-  if (nextBtn)  nextBtn.onclick  = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); CUR++; updatePageUI(); renderPage(); } };
-  if (nextBtn2) nextBtn2.onclick = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); CUR++; updatePageUI(); renderPage(); } };
-  if (finishBtn)  finishBtn.onclick  = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
-  if (finishBtn2) finishBtn2.onclick = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
-}
 function renderPage(){
   const quizEl = document.getElementById('quiz');
   const pageInfo = document.getElementById('pageInfo');
@@ -178,11 +151,24 @@ function renderPage(){
     quizEl.appendChild(card);
   });
   
-  pageInfo.textContent = `${CUR+1} / ${PAGES}`;
-  prog.style.width = `${Math.round(((CUR)/PAGES)*100)}%`;
-  document.getElementById('prevBtn').disabled = (CUR===0);
-  document.getElementById('nextBtn').classList.toggle('hidden', CUR===PAGES-1);
-  document.getElementById('finishBtn').classList.toggle('hidden', CUR!==PAGES-1);
+  // --- 페이지 정보/프로그레스 ---
+  const pageInfo = document.getElementById('pageInfo');
+  const prog     = document.getElementById('prog');
+  if (pageInfo) pageInfo.textContent = `${CUR+1} / ${PAGES}`;
+  if (prog)     prog.style.width     = `${Math.round((CUR/PAGES)*100)}%`;
+
+  // --- 하단 페이저만 사용 (여기서만 바인딩) ---
+  const prevBtn   = document.querySelector('#quizWrap #prevBtn');
+  const nextBtn   = document.querySelector('#quizWrap #nextBtn');
+  const finishBtn = document.querySelector('#quizWrap #finishBtn');
+
+  if (prevBtn)   prevBtn.disabled = (CUR===0);
+  if (nextBtn)   nextBtn.classList.toggle('hidden',  CUR===PAGES-1);
+  if (finishBtn) finishBtn.classList.toggle('hidden', CUR!==PAGES-1);
+
+  if (prevBtn)   prevBtn.onclick  = (e)=>{ e.preventDefault(); if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); } };
+  if (nextBtn)   nextBtn.onclick  = (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); CUR++; renderPage(); };
+  if (finishBtn) finishBtn.onclick= (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); finishQuiz(); };
 }
 
 function validateCurrentPage(){

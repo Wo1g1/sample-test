@@ -156,25 +156,46 @@ function renderPage(){
       </div>`;
     quizEl.appendChild(card);
   });
-
-  // 페이지 정보/프로그레스 (여기서만 선언! 중복 선언 금지)
+  // --- 페이지 정보/프로그레스 ---
   const pageInfo = document.getElementById('pageInfo');
   const prog     = document.getElementById('prog');
   if (pageInfo) pageInfo.textContent = `${CUR+1} / ${PAGES}`;
   if (prog)     prog.style.width     = `${Math.round((CUR/PAGES)*100)}%`;
 
-  // 하단 페이저 바인딩 (여기서만 바인딩)
-  const prevBtn   = document.querySelector('#quizWrap #prevBtn');
-  const nextBtn   = document.querySelector('#quizWrap #nextBtn');
-  const finishBtn = document.querySelector('#quizWrap #finishBtn');
+  // --- 하단 페이저(중복 리스너 제거 후 바인딩) ---
+  const replaceAndGet = (sel) => {
+    const old = document.querySelector(sel);
+    if (!old) return null;
+    const nn = old.cloneNode(true);         // ← 기존 리스너 싹 제거
+    old.parentNode.replaceChild(nn, old);
+    return nn;
+  };
+
+  const prevBtn   = replaceAndGet('#quizWrap #prevBtn');
+  const nextBtn   = replaceAndGet('#quizWrap #nextBtn');
+  const finishBtn = replaceAndGet('#quizWrap #finishBtn');
 
   if (prevBtn)   prevBtn.disabled = (CUR===0);
   if (nextBtn)   nextBtn.classList.toggle('hidden',  CUR===PAGES-1);
   if (finishBtn) finishBtn.classList.toggle('hidden', CUR!==PAGES-1);
 
-  if (prevBtn)   prevBtn.onclick  = (e)=>{ e.preventDefault(); if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); } };
-  if (nextBtn)   nextBtn.onclick  = (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); CUR++; renderPage(); };
-  if (finishBtn) finishBtn.onclick= (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); finishQuiz(); };
+  prevBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); }
+  });
+
+  nextBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (!validateCurrentPage()) return;     // ← 단 한 번만 검증
+    collectCurrentPage(); CUR++; renderPage();
+  });
+
+  finishBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (!validateCurrentPage()) return;
+    collectCurrentPage(); finishQuiz();
+  });
+  
 }
 
 function validateCurrentPage(){

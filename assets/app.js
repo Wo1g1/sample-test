@@ -90,16 +90,6 @@ function sideToLR(axis, side){
 
 /* ===== 퀴즈 ===== */
 function initQuiz(){
-  ORDERED = shuffle(QUESTIONS);
-  PAGES = Math.max(1, Math.ceil(ORDERED.length / PER_PAGE));
-  PAGES_DATA = [];
-  for(let i=0;i<PAGES;i++) PAGES_DATA.push(ORDERED.slice(i*PER_PAGE,(i+1)*PER_PAGE));
-  ANSWERS = {}; CUR=0;
-
-  const wrap = document.getElementById('quizWrap'); if(wrap) wrap.classList.remove('hidden');
-  updatePageUI();
-  renderPage();
-}
 function updatePageUI(){
   const pageInfo=document.getElementById('pageInfo');
   const prevBtn   = document.getElementById('prevBtn');
@@ -134,6 +124,21 @@ function renderPage(){
   const prog = document.getElementById('prog');
   const list = PAGES_DATA[CUR];
   quizEl.innerHTML = '';
+  
+  // ★ 보정: 현재 페이지 배열이 비거나 undefined면 재구성
+  if (!Array.isArray(list) || list.length === 0) {
+    // 혹시라도 PAGES_DATA가 비어 있으면 여기서 다시 만든다
+    if (!Array.isArray(PAGES_DATA) || PAGES_DATA.length !== PAGES) {
+      PAGES_DATA = [];
+      for (let i = 0; i < PAGES; i++) {
+        const slice = ORDERED.slice(i * PER_PAGE, (i + 1) * PER_PAGE);
+        PAGES_DATA.push(slice);
+      }
+    }
+    list = PAGES_DATA[CUR] || [];
+  }
+
+  // 문항 카드 렌더
   list.forEach((q,idx)=>{
     const id = `q_${q.id}`; const val = ANSWERS[q.id] ?? null;
     const card = document.createElement('div'); card.className = 'card';
@@ -153,6 +158,7 @@ function renderPage(){
       </div>`;
     quizEl.appendChild(card);
   });
+  
   pageInfo.textContent = `${CUR+1} / ${PAGES}`;
   prog.style.width = `${Math.round(((CUR)/PAGES)*100)}%`;
   document.getElementById('prevBtn').disabled = (CUR===0);

@@ -207,20 +207,21 @@ function renderPage(){
 
   nextBtn?.addEventListener('click', (e)=>{
     e.preventDefault();
-    if (!validateCurrentPage()) return;     // ← 단 한 번만 검증
-    collectCurrentPage(); CUR++; renderPage();
+    collectCurrentPage();                // ← 먼저 수집
+    if (!validateCurrentPage()) return;  // ← 그 다음 검증
+    CUR++; renderPage();
   });
 
   finishBtn?.addEventListener('click', (e)=>{
     e.preventDefault();
-    if (!validateCurrentPage()) return;
-    collectCurrentPage(); finishQuiz();
+    collectCurrentPage();                // ← 먼저 수집
+    if (!validateCurrentPage()) return;  // ← 그 다음 검증
+    finishQuiz();
   });
   
 }
 
 function validateCurrentPage(){
-  // 현재 화면(#quiz) 안에 있는 문항 그룹만 검사
   const groups = Array.from(document.querySelectorAll('#quiz .opts'));
   for (const g of groups){
     if (!g.querySelector('input[type="radio"]:checked')){
@@ -232,11 +233,10 @@ function validateCurrentPage(){
 }
 
 function collectCurrentPage(){
-  const list = PAGES_DATA[CUR];
+  const list = PAGES_DATA[CUR] || [];
   list.forEach(q=>{
-    const name = `q_${q.id}`;
-    const sel = document.querySelector(`input[name="${name}"]:checked`);
-    if (sel) ANSWERS[q.id] = parseInt(sel.value,10);
+    const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
+    if (sel) ANSWERS[q.id] = Number(sel.value);
   });
 }
 

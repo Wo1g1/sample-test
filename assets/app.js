@@ -75,7 +75,11 @@ const QUESTIONS = [
 
 /* ===== 전역 상태 ===== */
 const PER_PAGE = 10;
-let ORDERED=[], PAGES=1, PAGES_DATA=[], ANSWERS={}, CUR=0;
+let ORDERED=[]
+let PAGES=1
+let PAGES_DATA=[]
+let  CUR=0;
+let ANSWERS={}
 
 /* ===== 유틸 ===== */
 const round1 = x => Math.round(x*10)/10;
@@ -310,6 +314,32 @@ function tryShared(){
 document.addEventListener('DOMContentLoaded', ()=>{
   const isQuiz = !!document.getElementById('quizWrap');
   const isRes  = !!document.getElementById('results');
-  if (isQuiz) initQuiz();
-  if (isRes)  (tryShared() || renderResults());
+
+  if (isQuiz) {
+    initQuiz(); // 첫 페이지 렌더
+
+    // 하단 페이저에만 바인딩
+    const prevBtn   = document.getElementById('prevBtn');
+    const nextBtn   = document.getElementById('nextBtn');
+    const finishBtn = document.getElementById('finishBtn');
+
+    prevBtn?.addEventListener('click', (e)=>{
+      e.preventDefault();
+      if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); }
+    });
+
+    nextBtn?.addEventListener('click', (e)=>{
+      e.preventDefault();
+      if (!validateCurrentPage()) return;
+      collectCurrentPage(); CUR++; renderPage();
+    });
+
+    finishBtn?.addEventListener('click', (e)=>{
+      e.preventDefault();
+      if (!validateCurrentPage()) return;
+      collectCurrentPage(); finishQuiz();
+    });
+  }
+
+  if (isRes) (tryShared() || renderResults());
 });

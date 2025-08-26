@@ -15,23 +15,25 @@
   </header>
 
   <div class="wrap" id="app">
-    <section id="quizWrap">
-      <div class="card">
-        <div class="progressbar"><div id="prog" style="width:0%"></div></div>
-        </div>
+  <section id="quizWrap">
+    <div class="card">
+      <div class="progressbar"><div id="prog" style="width:0%"></div></div>
 
-        <div id="quiz"></div>
+      <!-- 문항이 붙을 자리 (필수) -->
+      <div id="quiz"></div>
 
-        <div class="pager">
-          <button class="btn" id="prevBtn">이전</button>
-          <span class="chip" id="pageInfo">1 / 5</span>
+      <!-- 하단 페이저만 사용 -->
+      <div class="pager" style="margin-top:12px">
+        <button class="btn" id="prevBtn">이전</button>
+        <span class="chip" id="pageInfo">1 / 5</span>
         <div style="display:flex;gap:8px">
           <button class="btn" id="nextBtn">다음</button>
           <button class="btn primary hidden" id="finishBtn">결과 보기</button>
+        </div>
       </div>
     </div>
-    </section>
-  </div>
+  </section>
+</div>
 
   <script src="../assets/app.js"></script>
 </body>

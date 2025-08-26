@@ -230,44 +230,55 @@ function buildResultTitle(s){
 }
 
 /* ===== 결과 렌더 ===== */
-function renderResults(payload){
-  const el=document.getElementById('results'); if(!el) return;
-  const s = payload || (()=>{
-    // 공유 파라미터 없을 때 방어 (빈 그래프)
-    return {M:{lp_all:0,np_all:0,rp_all:0},E:{lp_all:0,np_all:0,rp_all:0},L:{lp_all:0,np_all:0,rp_all:0},P:{lp_all:0,np_all:0,rp_all:0}};
-  })();
+function renderResults(){
+  document.getElementById('stageChip').textContent='결과';
+  document.getElementById('quizWrap').classList.add('hidden');
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('start').style.display='none';
 
-  el.innerHTML='';
-  const title = buildResultTitle(s);
-  const head = document.createElement('div');
-  head.className='card';
-  // 화면엔 제목만. 설명문은 코드에만 남김.
-  // 축별 비율(좌/중립/우)과 좌·우만 비교한 백분율을 함께 보여준다.
-  head.innerHTML = `<h2 style="margin:0 0 6px">${title}</h2>`;
-  el.appendChild(head);
+  const s=score(); 
+  const resultsEl=document.getElementById('results'); 
+  resultsEl.innerHTML='';
 
-  ['M','E','L','P'].forEach(axis=>{
-    const meta=AXES[axis], d=s[axis];
-    const card=document.createElement('div'); card.className='card';
-    card.innerHTML = `
+  const order=['M','E','L','P'];
+  const title=buildResultTitle(s);
+
+  const titleCard=document.createElement('div'); 
+  titleCard.className='card';
+  // 축별 비율(좌/중립/우)과 좌·우만 비교한 백분율을 함께 보여준다.  // ← 주석만 남김(화면 미표시)
+  titleCard.innerHTML=`<h2 style="margin:0 0 6px">${title}</h2>`;
+  resultsEl.appendChild(titleCard);
+
+  order.forEach(axis=>{ 
+    const meta=AXES[axis]; 
+    const d=s[axis];
+    const bar=document.createElement('div'); 
+    bar.className='bar';
+    bar.innerHTML=`
       <h3>${axis} — <b>${meta.left}</b> vs <b>${meta.right}</b></h3>
       <div class="barrow">
         <div class="baroverlay">
-          <div class="cell bar-left"  style="width:${d.lp_all}%">${d.lp_all?`${d.lp_all}%`:''}</div>
-          <div class="cell bar-mid"   style="width:${d.np_all}%">${d.np_all?`${d.np_all}%`:''}</div>
-          <div class="cell bar-right" style="width:${d.rp_all}%">${d.rp_all?`${d.rp_all}%`:''}</div>
+          <div class="cell" style="width:${d.lp_all}%">${d.lp_all?`${d.lp_all}%`:''}</div>
+          <div class="cell" style="width:${d.np_all}%"><span style="color:#111">${d.np_all?`${d.np_all}%`:''}</span></div>
+          <div class="cell" style="width:${d.rp_all}%">${d.rp_all?`${d.rp_all}%`:''}</div>
         </div>
       </div>
       <div class="barlbl"><span>${meta.left}</span><span>${meta.right}</span></div>`;
-      const barrow = card.querySelector('.barrow');
-  barrow.style.setProperty('--lp', d.lp_all);
-  barrow.style.setProperty('--np', d.np_all);
-  barrow.style.setProperty('--blend', 5);
-  barrow.classList.toggle('no-neutral', d.np_all <= 0.1);
-    el.appendChild(card);
+
+    // ★ 그라데이션용 CSS 변수 주입(필수)
+    const barrow = bar.querySelector('.barrow');
+    const blend = 5;
+    barrow.style.setProperty('--lp', d.lp_all);
+    barrow.style.setProperty('--np', d.np_all);
+    barrow.style.setProperty('--blend', blend);
+    barrow.classList.toggle('no-neutral', d.np_all <= 0.1);
+
+    resultsEl.appendChild(bar);
   });
 
-  const actions=document.getElementById('resultsActions'); if(actions) actions.classList.remove('hidden');
+  resultsEl.classList.remove('hidden');
+  document.getElementById('resultsActions').classList.remove('hidden');
+  window.scrollTo({top:resultsEl.offsetTop-20, behavior:'smooth'});
 }
 
 /* ===== 공유 파라미터로 결과 렌더 ===== */

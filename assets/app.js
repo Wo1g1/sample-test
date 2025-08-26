@@ -128,26 +128,37 @@ function updatePageUI(){
   if (finishBtn2) finishBtn2.onclick = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
 }
 function renderPage(){
-  const data=PAGES_DATA[CUR]||[];
-  const quizEl=document.getElementById('quiz');
-  const html = data.map((q, idx)=>{
-  const v = ANSWERS[q.id] ?? '';
-  const num = CUR * PER_PAGE + idx + 1; // ← 표시용 번호(연속 1~50)
-  return `
-    <div class="q">
-      <div class="qtext">${num}. ${q.text}</div>
-      <div class="opts" role="radiogroup">
-        ${[1,2,3,4,5].map(n=>`
-          <label class="opt">
-            <input type="radio" name="q${q.id}" value="${n}" ${v===n?'checked':''}>
-            <span>${n}. ${n===1?'전혀 아님':n===2?'대체로 아님':n===3?'중립/모름':n===4?'대체로 동의':'적극 동의'}</span>
-          </label>`).join('')}
-      </div>
-    </div>`;
-}).join('');
-
-  if (quizEl) quizEl.innerHTML = html;
+  const quizEl = document.getElementById('quiz');
+  const pageInfo = document.getElementById('pageInfo');
+  const prog = document.getElementById('prog');
+  const list = PAGES_DATA[CUR];
+  quizEl.innerHTML = '';
+  list.forEach((q,idx)=>{
+    const id = `q_${q.id}`; const val = ANSWERS[q.id] ?? null;
+    const card = document.createElement('div'); card.className = 'card';
+    card.innerHTML = `
+      <div class="q">
+        <div class="qnum">${CUR*PER_PAGE + idx + 1}</div>
+        <div class="qbody">
+          <p class="qtext">${q.text}</p>
+          <div class="opts" role="radiogroup">
+            ${[1,2,3,4,5].map(v=>{
+              const lbl = v===1?'전혀 아님':v===2?'대체로 아님':v===3?'중립/모름':v===4?'대체로 동의':'적극 동의';
+              const checked = (val===v)?'checked':'';
+              return `<label class="opt"><input type="radio" name="${id}" value="${v}" ${checked}/> <span>${v}. ${lbl}</span></label>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+    quizEl.appendChild(card);
+  });
+  pageInfo.textContent = `${CUR+1} / ${PAGES}`;
+  prog.style.width = `${Math.round(((CUR)/PAGES)*100)}%`;
+  document.getElementById('prevBtn').disabled = (CUR===0);
+  document.getElementById('nextBtn').classList.toggle('hidden', CUR===PAGES-1);
+  document.getElementById('finishBtn').classList.toggle('hidden', CUR!==PAGES-1);
 }
+
 function validateCurrentPage(){
   const data=PAGES_DATA[CUR]||[];
   for(const q of data){

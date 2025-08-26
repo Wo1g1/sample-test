@@ -159,23 +159,28 @@ function renderPage(){
   document.getElementById('finishBtn').classList.toggle('hidden', CUR!==PAGES-1);
 }
 
-function validateCurrentPage(){
-  const data=PAGES_DATA[CUR]||[];
-  for(const q of data){
-    if(!document.querySelector(`input[name="q${q.id}"]:checked`)){
-      alert('이 페이지 문항을 모두 선택해야 넘어갈 수 있어.');
-      return false;
+function validateCurrentPage() {
+  const list = PAGES_DATA[CUR];
+  for (const q of list) {
+    const name = `q_${q.id}`;
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    if (!sel) {
+      const card = document.querySelector(`input[name="${name}"]`)?.closest('.card');
+      return { ok: false, card };
     }
   }
-  return true;
+  return { ok: true, card: null };
 }
+
 function collectCurrentPage(){
-  const data=PAGES_DATA[CUR]||[];
-  data.forEach(q=>{
-    const sel=document.querySelector(`input[name="q${q.id}"]:checked`);
-    if (sel) ANSWERS[q.id]=Number(sel.value);
+  const list = PAGES_DATA[CUR];
+  list.forEach(q=>{
+    const name = `q_${q.id}`;
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    if (sel) ANSWERS[q.id] = parseInt(sel.value,10);
   });
 }
+
 function finishQuiz(){
   const s = score();
   const payload = {

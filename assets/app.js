@@ -90,7 +90,7 @@ function sideToLR(axis, side){
 
 /* ===== 퀴즈 ===== */
 function initQuiz(){
-  ORDERED = shuffle(QUESTIONS);
+  ORDERED = QUESTIONS.slice().sort(()=>Math.random()-0.5);
   PAGES   = Math.max(1, Math.ceil(ORDERED.length / PER_PAGE));
 
   PAGES_DATA = [];

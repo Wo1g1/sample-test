@@ -113,31 +113,30 @@ function initQuiz(){
 
 function renderPage(){
   const quizEl = document.getElementById('quiz');
-  const pageInfo = document.getElementById('pageInfo');
-  const prog = document.getElementById('prog');
   let list = (PAGES_DATA[CUR] && PAGES_DATA[CUR].length)
-  ? PAGES_DATA[CUR]
-  : ORDERED.slice(CUR*PER_PAGE, (CUR+1)*PER_PAGE);
+    ? PAGES_DATA[CUR]
+    : ORDERED.slice(CUR*PER_PAGE, (CUR+1)*PER_PAGE);
 
   quizEl.innerHTML = '';
-  
-  // ★ 보정: 현재 페이지 배열이 비거나 undefined면 재구성
+
+  // 필요시 보정
   if (!Array.isArray(list) || list.length === 0) {
-    // 혹시라도 PAGES_DATA가 비어 있으면 여기서 다시 만든다
     if (!Array.isArray(PAGES_DATA) || PAGES_DATA.length !== PAGES) {
       PAGES_DATA = [];
       for (let i = 0; i < PAGES; i++) {
-        const slice = ORDERED.slice(i * PER_PAGE, (i + 1) * PER_PAGE);
-        PAGES_DATA.push(slice);
+        PAGES_DATA.push(ORDERED.slice(i*PER_PAGE, (i+1)*PER_PAGE));
       }
     }
     list = PAGES_DATA[CUR] || [];
   }
 
-  // 문항 카드 렌더
+  // 문항 카드
   list.forEach((q,idx)=>{
-    const id = `q_${q.id}`; const val = ANSWERS[q.id] ?? null;
-    const card = document.createElement('div'); card.className = 'card';
+    const id = `q_${q.id}`;
+    const val = ANSWERS[q.id] ?? null;
+
+    const card = document.createElement('div'); 
+    card.className = 'card';
     card.innerHTML = `
       <div class="q">
         <div class="qnum">${CUR*PER_PAGE + idx + 1}</div>
@@ -147,21 +146,24 @@ function renderPage(){
             ${[1,2,3,4,5].map(v=>{
               const lbl = v===1?'전혀 아님':v===2?'대체로 아님':v===3?'중립/모름':v===4?'대체로 동의':'적극 동의';
               const checked = (val===v)?'checked':'';
-              return `<label class="opt"><input type="radio" name="${id}" value="${v}" ${checked}/> <span>${v}. ${lbl}</span></label>`;
+              return `<label class="opt">
+                        <input type="radio" name="${id}" value="${v}" ${checked}/>
+                        <span>${v}. ${lbl}</span>
+                      </label>`;
             }).join('')}
           </div>
         </div>
       </div>`;
     quizEl.appendChild(card);
   });
-  
-  // --- 페이지 정보/프로그레스 ---
+
+  // 페이지 정보/프로그레스 (여기서만 선언! 중복 선언 금지)
   const pageInfo = document.getElementById('pageInfo');
   const prog     = document.getElementById('prog');
   if (pageInfo) pageInfo.textContent = `${CUR+1} / ${PAGES}`;
   if (prog)     prog.style.width     = `${Math.round((CUR/PAGES)*100)}%`;
 
-  // --- 하단 페이저만 사용 (여기서만 바인딩) ---
+  // 하단 페이저 바인딩 (여기서만 바인딩)
   const prevBtn   = document.querySelector('#quizWrap #prevBtn');
   const nextBtn   = document.querySelector('#quizWrap #nextBtn');
   const finishBtn = document.querySelector('#quizWrap #finishBtn');
@@ -317,11 +319,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   if (isQuiz) {
     initQuiz(); // 첫 페이지 렌더
-
-    // 하단 페이저에만 바인딩
-    const prevBtn   = document.getElementById('prevBtn');
-    const nextBtn   = document.getElementById('nextBtn');
-    const finishBtn = document.getElementById('finishBtn');
 
     prevBtn?.addEventListener('click', (e)=>{
       e.preventDefault();

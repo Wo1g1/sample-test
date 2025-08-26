@@ -103,10 +103,13 @@ function initQuiz(){
 function updatePageUI(){
   const pageInfo=document.getElementById('pageInfo');
   const pageInfo2=document.getElementById('pageInfo2');
-  const prevBtn=document.getElementById('prevBtn'), prevBtn2=document.getElementById('prevBtn2');
-  const nextBtn=document.getElementById('nextBtn'), nextBtn2=document.getElementById('nextBtn2');
-  const finishBtn=document.getElementById('finishBtn'), finishBtn2=document.getElementById('finishBtn2');
-  const prog=document.getElementById('prog');
+  const prevBtn   = document.getElementById('prevBtn');
+  const nextBtn   = document.getElementById('nextBtn');
+  const finishBtn = document.getElementById('finishBtn');
+
+  if (prevBtn)  prevBtn.onclick  = (e)=>{ e.preventDefault(); if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); } };
+  if (nextBtn)  nextBtn.onclick  = (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); CUR++; renderPage(); };
+  if (finishBtn)finishBtn.onclick= (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); finishQuiz(); };
 
   if (pageInfo)  pageInfo.textContent  = `${CUR+1} / ${PAGES}`;
   if (pageInfo2) pageInfo2.textContent = `${CUR+1} / ${PAGES}`;
@@ -159,17 +162,16 @@ function renderPage(){
   document.getElementById('finishBtn').classList.toggle('hidden', CUR!==PAGES-1);
 }
 
-function validateCurrentPage() {
-  const list = PAGES_DATA[CUR];
-  for (const q of list) {
-    const name = `q_${q.id}`;
-    const sel = document.querySelector(`input[name="${name}"]:checked`);
+function validateCurrentPage(){
+  const list = PAGES_DATA[CUR] || [];
+  for (const q of list){
+    const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
     if (!sel) {
-      const card = document.querySelector(`input[name="${name}"]`)?.closest('.card');
-      return { ok: false, card };
+      alert('이 페이지 문항을 모두 선택해야 넘어갈 수 있어.');
+      return false;
     }
   }
-  return { ok: true, card: null };
+  return true;
 }
 
 function collectCurrentPage(){

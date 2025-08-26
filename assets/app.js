@@ -102,7 +102,6 @@ function initQuiz(){
 }
 function updatePageUI(){
   const pageInfo=document.getElementById('pageInfo');
-  const pageInfo2=document.getElementById('pageInfo2');
   const prevBtn   = document.getElementById('prevBtn');
   const nextBtn   = document.getElementById('nextBtn');
   const finishBtn = document.getElementById('finishBtn');
@@ -112,7 +111,6 @@ function updatePageUI(){
   if (finishBtn)finishBtn.onclick= (e)=>{ e.preventDefault(); if (!validateCurrentPage()) return; collectCurrentPage(); finishQuiz(); };
 
   if (pageInfo)  pageInfo.textContent  = `${CUR+1} / ${PAGES}`;
-  if (pageInfo2) pageInfo2.textContent = `${CUR+1} / ${PAGES}`;
   if (prog) prog.style.width = `${Math.round(((CUR)/PAGES)*100)}%`;
 
   const isLast = CUR === PAGES-1;
@@ -238,10 +236,7 @@ function buildResultTitle(s){
 
 /* ===== 결과 렌더 ===== */
 function renderResults(){
-  document.getElementById('stageChip').textContent='결과';
-  document.getElementById('quizWrap').classList.add('hidden');
-  document.getElementById('start').classList.add('hidden');
-  document.getElementById('start').style.display='none';
+  const chip = document.getElementById('stageChip'); if (chip) chip.textContent = '결과';
 
   const s=score(); 
   const resultsEl=document.getElementById('results'); 

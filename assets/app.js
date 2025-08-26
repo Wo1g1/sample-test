@@ -20,18 +20,57 @@ const NAME_MAP = {
   '우-우-좌':'권위적 개혁주의','우-우-중도':'권위적 규제주의','우-우-우':'국가주의',
 };
 
-/* ===== 데모 문항(10개) — 동작 확인용. 네 문항으로 교체 가능 ===== */
 const QUESTIONS = [
-  {id:1, text:"마법은 인류에 순효과다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1}]},
-  {id:2, text:"마법 연구는 줄여야 한다.", S:1.0, effects:[{axis:'M', side:'반마법', w:1}]},
-  {id:3, text:"법 앞의 평등이 중요하다.", S:1.2, effects:[{axis:'E', side:'평등', w:1}]},
-  {id:4, text:"엘리트의 지도가 필요하다.", S:1.2, effects:[{axis:'E', side:'권위', w:1}]},
-  {id:5, text:"연구·표현의 자유가 우선이다.", S:1.2, effects:[{axis:'L', side:'자유', w:1}]},
-  {id:6, text:"공공안전을 위해 규제가 필요하다.", S:1.0, effects:[{axis:'L', side:'규제', w:1}]},
-  {id:7, text:"사회는 더 진보해야 한다.", S:1.0, effects:[{axis:'P', side:'진보', w:1}]},
-  {id:8, text:"전통 가치를 지켜야 한다.", S:1.0, effects:[{axis:'P', side:'보수', w:1}]},
-  {id:9, text:"마법 원리 연구를 허용해야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1}]},
-  {id:10,text:"무규제 연구는 위험하다.", S:1.0, effects:[{axis:'L', side:'규제', w:1}]},
+  {id:1, text:"마법은 학문으로 인정받아야 하며 장기적으로 인류 복지에 순효과를 낳는다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
+  {id:2, text:"마법은 결과적으로 사회에 해를 끼친다.", S:1.2, effects:[{axis:'M', side:'반마법', w:1.0}]},
+  {id:3, text:"충분히 검증 가능한 마법 원리의 연구는 허용되어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
+  {id:4, text:"마법은 예측 불가능성이 커서 연구 자체를 줄여야 한다.", S:1.0, effects:[{axis:'M', side:'반마법', w:1.0}]},
+  {id:5, text:"마법은 과학과 동등한 지적 전통으로 존중받아야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
+  {id:6, text:"모든 신분은 법 앞에서 동등해야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0}]},
+  {id:7, text:"사회의 안정에는 상층 엘리트의 지도가 필수적이다.", S:1.2, effects:[{axis:'E', side:'권위', w:1.0}]},
+  {id:8, text:"출신과 혈통은 공적 권리에서 우선 고려 요소가 되어야만 한다.", S:1.2, effects:[{axis:'E', side:'권위', w:1.0}]},
+  {id:9, text:"출신과 무관하게 공직 진출 기회가 주어져야 한다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0}]},
+  {id:10, text:"위계적 권위는 질서 유지에 도움이 될 때가 많다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0}]},
+  {id:11, text:"연구와 발명은 개인의 자유에 맡겨져야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0}]},
+  {id:12, text:"위험한 연구는 반드시 공적 허가 절차를 거쳐야 한다.", S:1.2, effects:[{axis:'L', side:'규제', w:1.0}]},
+  {id:13, text:"언론과 집회의 자유는 위기에서도 보장돼야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0}]},
+  {id:14, text:"공공 안전을 위해 개인의 권리를 제한할 때가 있다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0}]},
+  {id:15, text:"무규제 연구나 시장은 사회적 혼란을 초래할 가능성이 높다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0}]},
+  {id:16, text:"낡은 제도보다 개혁과 변화가 우선이다.", S:1.0, effects:[{axis:'P', side:'진보', w:1.0}]},
+  {id:17, text:"전통적 제도는 지금까지 유지된 분명한 이유가 있다.", S:1.2, effects:[{axis:'P', side:'보수', w:1.0}]},
+  {id:18, text:"변화 저항은 사회의 퇴보를 낳는다.", S:1.2, effects:[{axis:'P', side:'진보', w:1.0}]},
+  {id:19, text:"과거의 질서는 오늘날에도 유효한 기준을 제공한다.", S:1.0, effects:[{axis:'P', side:'보수', w:1.0}]},
+  {id:20, text:"급속한 개혁은 혼란을 키운다.", S:0.8, effects:[{axis:'P', side:'보수', w:1.0}]},
+  {id:21, text:"마법은 모든 계급에 개방돼야 한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'평등', w:0.8}]},
+  {id:22, text:"이론적 마법 교육이 현장에서 쓰이는 마법보다 낫다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'권위', w:0.8}]},
+  {id:23, text:"평등을 위해 마법 교육의 장벽을 낮춰야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:0.8},{axis:'E', side:'평등', w:1.0}]},
+  {id:24, text:"정규 교육을 받는 마법사만이 마법을 사용해야 한다.", S:0.8, effects:[{axis:'M', side:'친마법', w:0.6},{axis:'E', side:'권위', w:1.0}]},
+  {id:25, text:"공개 시험/자격제로 마법 접근을 공정화해야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'평등', w:0.6}]},
+  {id:26, text:"마법 연구는 누구나 자유롭게 시도할 수 있어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'L', side:'자유', w:0.6}]},
+  {id:27, text:"위험한 마법 연구의 경우는, 반드시 규제되어야 한다.", S:1.2, effects:[{axis:'M', side:'반마법', w:0.8},{axis:'L', side:'규제', w:1.0}]},
+  {id:28, text:"자율 규범만으로도 마법 안전을 지킬 수 있다.", S:0.8, effects:[{axis:'M', side:'친마법', w:0.8},{axis:'L', side:'자유', w:1.0}]},
+  {id:29, text:"마법 면허제는 안전한 마법 사용을 위해 필수적이다.", S:1.0, effects:[{axis:'M', side:'친마법', w:0.6},{axis:'L', side:'규제', w:1.0}]},
+  {id:30, text:"마법 지식의 공개가 혁신을 가속한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'L', side:'자유', w:0.8}]},
+  {id:31, text:"마법은 새로운 제도를 만들어낼 힘이어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:0.8},{axis:'P', side:'진보', w:1.0}]},
+  {id:32, text:"현재 마법 산업보다, 과거의 마법이 더 낫다.", S:1.0, effects:[{axis:'M', side:'반마법', w:0.8},{axis:'P', side:'보수', w:1.0}]},
+  {id:33, text:"개혁과 함께 마법 제도도 바뀌어야 한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:34, text:"마법 사용의 관습적 규칙은 지금 적용될 수 없다.", S:0.8, effects:[{axis:'M', side:'반마법', w:0.6},{axis:'P', side:'진보', w:1.0}]},
+  {id:35, text:"혁신적 마법 응용은 보수적 제도를 교체해야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'P', side:'진보', w:0.8}]},
+  {id:36, text:"자유는 평등을 위해 필수적이다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'자유', w:0.8}]},
+  {id:37, text:"평등을 위해 일부 자유의 제한이 불가피하다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.6}]},
+  {id:38, text:"자유가 없으면 평등도 공허하다.", S:0.8, effects:[{axis:'E', side:'평등', w:0.6},{axis:'L', side:'자유', w:1.0}]},
+  {id:39, text:"규제 강화가 불평등을 줄인다.", S:1.0, effects:[{axis:'E', side:'평등', w:0.8},{axis:'L', side:'규제', w:1.0}]},
+  {id:40, text:"권리장전 보장이 평등의 기초다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'자유', w:0.6}]},
+  {id:41, text:"사회 개혁은 불평등 해소를 목표로 해야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:42, text:"전통적 위계·질서를 지키는 일이 평등보다 우선이다.", S:1.0, effects:[{axis:'E', side:'권위', w:0.8},{axis:'P', side:'보수', w:1.0}]},
+  {id:43, text:"부의 재분배는 개혁의 핵심 과제이다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'P', side:'진보', w:0.8}]},
+  {id:44, text:"관습법과 작위를 존중할 수 있다.", S:0.8, effects:[{axis:'E', side:'권위', w:0.6},{axis:'P', side:'보수', w:1.0}]},
+  {id:45, text:"평등한 참정권 확대가 곧 개혁의 출발점이다.", S:1.0, effects:[{axis:'E', side:'평등', w:0.8},{axis:'P', side:'진보', w:1.0}]},
+  {id:46, text:"표현·결사의 자유는 개혁의 전제다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:47, text:"검열·치안 강화를 통해 전통 질서를 지켜야 한다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0},{axis:'P', side:'보수', w:0.6}]},
+  {id:48, text:"자유시장·자유연구가 사회 혁신을 낳는다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'P', side:'진보', w:0.6}]},
+  {id:49, text:"종교·전통 규범을 위해 자유를 제한할 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:0.8},{axis:'P', side:'보수', w:1.0}]},
+  {id:50, text:"시민적 자유 확대는 보수적 제도와도 양립 가능하다.", S:0.8, effects:[{axis:'L', side:'자유', w:0.8},{axis:'P', side:'보수', w:0.6}]},
 ];
 
 /* ===== 전역 상태 ===== */
@@ -71,7 +110,7 @@ function updatePageUI(){
 
   if (pageInfo)  pageInfo.textContent  = `${CUR+1} / ${PAGES}`;
   if (pageInfo2) pageInfo2.textContent = `${CUR+1} / ${PAGES}`;
-  if (prog) prog.style.width = `${(CUR+1)/PAGES*100}%`;
+  if (prog) prog.style.width = `${Math.round(((CUR)/PAGES)*100)}%`;
 
   const isLast = CUR === PAGES-1;
   [nextBtn,nextBtn2].forEach(b=>b && b.classList.toggle('hidden', isLast));
@@ -91,20 +130,22 @@ function updatePageUI(){
 function renderPage(){
   const data=PAGES_DATA[CUR]||[];
   const quizEl=document.getElementById('quiz');
-  const html = data.map(q=>{
-    const v = ANSWERS[q.id] ?? '';
-    return `
-      <div class="q">
-        <div class="qtext">${q.id}. ${q.text}</div>
-        <div class="opts">
-          ${[1,2,3,4,5].map(n=>`
-            <label class="opt">
-              <input type="radio" name="q${q.id}" value="${n}" ${v===n?'checked':''}>
-              <div>${n}</div>
-            </label>`).join('')}
-        </div>
-      </div>`;
-  }).join('');
+  const html = data.map((q, idx)=>{
+  const v = ANSWERS[q.id] ?? '';
+  const num = CUR * PER_PAGE + idx + 1; // ← 표시용 번호(연속 1~50)
+  return `
+    <div class="q">
+      <div class="qtext">${num}. ${q.text}</div>
+      <div class="opts" role="radiogroup">
+        ${[1,2,3,4,5].map(n=>`
+          <label class="opt">
+            <input type="radio" name="q${q.id}" value="${n}" ${v===n?'checked':''}>
+            <span>${n}. ${n===1?'전혀 아님':n===2?'대체로 아님':n===3?'중립/모름':n===4?'대체로 동의':'적극 동의'}</span>
+          </label>`).join('')}
+      </div>
+    </div>`;
+}).join('');
+
   if (quizEl) quizEl.innerHTML = html;
 }
 function validateCurrentPage(){
@@ -207,6 +248,11 @@ function renderResults(payload){
         </div>
       </div>
       <div class="barlbl"><span>${meta.left}</span><span>${meta.right}</span></div>`;
+      const barrow = card.querySelector('.barrow');
+  barrow.style.setProperty('--lp', d.lp_all);
+  barrow.style.setProperty('--np', d.np_all);
+  barrow.style.setProperty('--blend', 5);
+  barrow.classList.toggle('no-neutral', d.np_all <= 0.1);
     el.appendChild(card);
   });
 

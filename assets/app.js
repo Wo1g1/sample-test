@@ -188,9 +188,9 @@ function renderPage(){
 function validateCurrentPage(){
   const list = PAGES_DATA[CUR] || [];
   for (const q of list){
-    const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
-    if (!sel) {
-      alert('이 페이지 문항을 모두 선택해야 넘어갈 수 있어.');
+    const picked = document.querySelector(`input[name="q_${q.id}"]:checked`);
+    if (!picked){
+      alert('모든 문항을 모두 선택해 주세요.');
       return false;
     }
   }

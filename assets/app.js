@@ -118,6 +118,7 @@ function updatePageUI(){
   if (finishBtn)  finishBtn.onclick  = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
   if (finishBtn2) finishBtn2.onclick = ()=>{ if (validateCurrentPage()){ collectCurrentPage(); finishQuiz(); } };
 }
+};
 function renderPage(){
   const quizEl = document.getElementById('quiz');
   const pageInfo = document.getElementById('pageInfo');

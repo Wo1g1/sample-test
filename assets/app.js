@@ -225,6 +225,11 @@ function finishQuiz(){
     M: pickPerc(s.M), E: pickPerc(s.E), L: pickPerc(s.L), P: pickPerc(s.P)
   };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+
+  // 결과 페이지용 로컬 저장 (쿼리파라미터 못 읽을 때 폴백)
+  localStorage.setItem('answers_v11', JSON.stringify(ANSWERS));
+  localStorage.setItem('order_v11', JSON.stringify(ORDERED.map(q=>q.id)));
+  
   location.href = '../result/?s='+b64;
 }
 function pickPerc(d){ return {
@@ -359,5 +364,42 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   }
 
-  if (isRes) (tryShared() || renderResults());
+  if (isRes) {
+  // 1) s=… 쿼리 우선 시도
+  let loaded = false;
+  const qs = new URLSearchParams(location.search).get('s');
+  if (qs) {
+    try {
+      const payload = JSON.parse(decodeURIComponent(atob(qs)));
+      if (payload && payload.answers) {
+        ANSWERS = payload.answers;
+        if (Array.isArray(payload.seed)) {
+          ORDERED = payload.seed.map(id => QUESTIONS.find(x=>x.id===id)).filter(Boolean);
+        }
+        loaded = true;
+      }
+    } catch(e) {}
+  }
+  // 2) 실패하면 로컬 저장소 폴백
+  if (!loaded) {
+    try {
+      const a = localStorage.getItem('answers_v11');
+      if (a) ANSWERS = JSON.parse(a);
+      const o = localStorage.getItem('order_v11');
+      if (o) {
+        const ids = JSON.parse(o);
+        ORDERED = ids.map(id => QUESTIONS.find(x=>x.id===id)).filter(Boolean);
+      }
+    } catch(e) {}
+  }
+  // 3) ORDERED 비면 QUESTIONS로 채우고 슬라이스 구성
+  if (!Array.isArray(ORDERED) || ORDERED.length===0) ORDERED = QUESTIONS.slice();
+  PAGES = Math.max(1, Math.ceil(ORDERED.length / PER_PAGE));
+  PAGES_DATA = [];
+  for (let i=0;i<PAGES;i++){
+    PAGES_DATA.push(ORDERED.slice(i*PER_PAGE,(i+1)*PER_PAGE));
+  }
+  // 4) 렌더
+  renderResults();
+}
 });

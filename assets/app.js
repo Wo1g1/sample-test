@@ -366,23 +366,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   if (isQuiz) {
     initQuiz(); // 첫 페이지 렌더
-
-    prevBtn?.addEventListener('click', (e)=>{
-      e.preventDefault();
-      if (CUR>0){ collectCurrentPage(); CUR--; renderPage(); }
-    });
-
-    nextBtn?.addEventListener('click', (e)=>{
-      e.preventDefault();
-      if (!validateCurrentPage()) return;
-      collectCurrentPage(); CUR++; renderPage();
-    });
-
-    finishBtn?.addEventListener('click', (e)=>{
-      e.preventDefault();
-      if (!validateCurrentPage()) return;
-      collectCurrentPage(); finishQuiz();
-    });
   }
 
   if (isRes) {

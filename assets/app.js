@@ -283,13 +283,21 @@ function score(){
   });
   return out;
 }
+
 function decideSide(d){
-  const neutral=d.np_all;
-  const diff=Math.abs(d.lp_all - d.rp_all);
-  const isMiddle = (neutral < 21 && diff < 7) || (neutral >= 21 && diff < 14);
+  // 좌우만의 비율(중립 제외)
+  const diff_lr = Math.abs(d.lp_lr - d.rp_lr);   // 퍼센트 포인트
+  const neutral = d.np_all;                      // 전체 중립 비율(%)
+
+  // 1) 중립 비율 무관: 좌우 차 < 5%p → 중도
+  // 2) 중립 ≥ 25%일 때: 좌우 차 < 10%p → 중도
+  const isMiddle = (diff_lr < 5) || (neutral >= 25 && diff_lr < 10);
   if (isMiddle) return '중도';
-  return d.lp_all >= d.rp_all ? '좌' : '우';
+
+  // 3) 그 외엔 중립 비율 무시하고 좌우 큰 쪽으로 판정
+  return d.lp_lr >= d.rp_lr ? '좌' : '우';
 }
+
 function buildResultTitle(s){
   const m=decideSide(s.M), e=decideSide(s.E), l=decideSide(s.L), p=decideSide(s.P);
   if (m==='중도'&&e==='중도'&&l==='중도'&&p==='중도') return '극단적 중도주의';

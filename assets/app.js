@@ -95,7 +95,7 @@ var QUESTIONS = window.QUESTIONS ||  [
 ]; window.QUESTIONS = QUESTIONS;
 
 /* ===== 전역 상태 ===== */
-const PER_PAGE = 10;
+const PER_PAGE = 5;
 let ORDERED=[]
 let PAGES=1
 let PAGES_DATA=[]

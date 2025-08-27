@@ -92,3 +92,12 @@
   .hero{display:grid;gap:16px;margin-top:16px}
   .hero h2{margin:0;font-size:20px}
   .hero ul{margin:0 0 0 18px;color:var(--muted)}
+
+  /* 문항 카드 간 여백 (퀴즈 화면에만 적용) */
+  #quiz .card { 
+    margin-bottom: 10px;   /* 필요하면 8~12px 정도로 조절 */
+  }
+  #quiz .card:last-child {
+    margin-bottom: 0;
+  }
+

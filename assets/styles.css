@@ -95,9 +95,14 @@
 
   /* 문항 카드 간 여백 (퀴즈 화면에만 적용) */
   #quiz .card { 
-    margin-bottom: 10px;   /* 필요하면 8~12px 정도로 조절 */
+    margin-bottom: 12px;   /* 필요하면 8~12px 정도로 조절 */
   }
   #quiz .card:last-child {
     margin-bottom: 0;
   }
+
+/* 진행도 막대 → 첫 문항 간 여백 */
+#prog { 
+  margin-bottom: 12px;
+}
 

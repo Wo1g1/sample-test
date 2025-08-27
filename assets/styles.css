@@ -44,7 +44,7 @@
 
   /* 페이지 네비 */
   .pager{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:12px}
-  .progressbar{height:8px;background:#0f1117;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .progressbar{height:8px;background:#0f1117;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:12px}
   .progressbar > div{height:100%;background:linear-gradient(90deg,var(--accent),#7bdff2)}
 
   /* 결과 막대 */
@@ -95,14 +95,9 @@
 
   /* 문항 카드 간 여백 (퀴즈 화면에만 적용) */
   #quiz .card { 
-    margin-bottom: 12px;   /* 필요하면 8~12px 정도로 조절 */
+    margin-bottom: 12px;
   }
   #quiz .card:last-child {
     margin-bottom: 0;
   }
-
-/* 진행도 막대 → 첫 문항 간 여백 */
-#prog { 
-  margin-bottom: 12px;
-}
 

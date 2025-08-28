@@ -3,7 +3,6 @@ var AXES = window.AXES || {
   M:{left:"반마법", right:"친마법"},
   E:{left:"평등",  right:"권위"},
   L:{left:"자유",  right:"규제"},
-  P:{left:"진보",  right:"보수"},
 }; window.AXES = AXES;
 
 var RESP = window.RESP || {
@@ -11,37 +10,13 @@ var RESP = window.RESP || {
 }; window.RESP = RESP;
 
 /* 이름 맵(임시) — E-L-P 조합 */
-var NAME_MAP = window.NAME_MAP || {
-  '좌-좌-좌':'혁명주의',
-  '좌-좌-중도':'진보적 자유평등',
-  '좌-좌-우':'자유보수주의',
-  '좌-중도-좌':'진보적 평등주의',
-  '좌-중도-중도':'중도적 평등주의',
-  '좌-중도-우':'평등적 자유보수주의',
-  '좌-우-좌':'사회주의',
-  '좌-우-중도':'중도적 규제평등',
-  '좌-우-우':'보수적 평등주의',
-  '중도-좌-좌':'자유평등 개혁주의',
-  '중도-좌-중도':'자유평등 중도주의',
-  '중도-좌-우':'자유보수 평등주의',
-  '중도-중도-좌':'중도적 개혁주의',
-  '중도-중도-중도':'중도주의',
-  '중도-중도-우':'중도적 보수주의',
-  '중도-우-좌':'진보적 규제주의',
-  '중도-우-중도':'중도적 규제주의',
-  '중도-우-우':'보수적 규제주의',
-  '우-좌-좌':'엘리트 개혁주의',
-  '우-좌-중도':'엘리트 자유주의',
-  '우-좌-우':'엘리트 자유보수',
-  '우-중도-좌':'보수적 평등개혁',
-  '우-중도-중도':'중도적 권위주의',
-  '우-중도-우':'권위적 보수주의',
-  '우-우-좌':'권위적 개혁주의',
-  '우-우-중도':'권위적 규제주의',
-  '우-우-우':'국가주의',
-}; window.NAME_MAP = NAME_MAP;
+const EL_GRID_LABELS = {
+  '좌':   { '좌': 'E좌/L좌',   '중도': 'E좌/L중도',   '우': 'E좌/L우' },
+  '중도': { '좌': 'E중도/L좌', '중도': 'E중도/L중도', '우': 'E중도/L우' },
+  '우':   { '좌': 'E우/L좌',   '중도': 'E우/L중도',   '우': 'E우/L우' }
+};
 
-var QUESTIONS = window.QUESTIONS ||  [
+var ALL_QUESTIONS = window.QUESTIONS ||  [
   {id:1, text:"마법은 학문으로 인정받아야 하며 장기적으로 인류 복지에 순효과를 낳는다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
   {id:2, text:"마법은 결과적으로 사회에 해를 끼친다.", S:1.2, effects:[{axis:'M', side:'반마법', w:1.0}]},
   {id:3, text:"충분히 검증 가능한 마법 원리의 연구는 허용되어야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
@@ -92,7 +67,13 @@ var QUESTIONS = window.QUESTIONS ||  [
   {id:48, text:"자유시장·자유연구가 사회 혁신을 낳는다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'P', side:'진보', w:0.6}]},
   {id:49, text:"종교·전통 규범을 위해 자유를 제한할 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:0.8},{axis:'P', side:'보수', w:1.0}]},
   {id:50, text:"시민적 자유 확대는 보수적 제도와도 양립 가능하다.", S:0.8, effects:[{axis:'L', side:'자유', w:0.8},{axis:'P', side:'보수', w:0.6}]},
-]; window.QUESTIONS = QUESTIONS;
+];
+let QUESTIONS = ALL_QUESTIONS
+  .map(q => ({ ...q, effects: q.effects.filter(e => e.axis !== 'P') }))  // P축 효과 제거
+  .filter(q => q.effects.length > 0)                                      // 효과 없으면 문항 제거
+  .map((q, i) => ({ ...q, id: i + 1 }));                                  // 1..N 재번호
+
+window.QUESTIONS = QUESTIONS;
 
 /* ===== 전역 상태 ===== */
 const PER_PAGE = 5;
@@ -109,7 +90,7 @@ function sideToLR(axis, side){
   const m=AXES[axis];
   if (side===m.left) return 'left';
   if (side===m.right) return 'right';
-  if (['친마법','평등','자유','진보'].includes(side)) return 'left';
+  if (['친마법','평등','자유'].includes(side)) return 'left';
   return 'right';
 }
 
@@ -243,7 +224,7 @@ function collectCurrentPage(){
 function finishQuiz(){
   const s = score();
   const payload = {
-    M: pickPerc(s.M), E: pickPerc(s.E), L: pickPerc(s.L), P: pickPerc(s.P)
+    M: pickPerc(s.M), E: pickPerc(s.E), L: pickPerc(s.L)
   };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
 
@@ -259,7 +240,7 @@ function pickPerc(d){ return {
 
 /* ===== 채점/판정/타이틀 ===== */
 function score(){
-  const sums={M:{left:0,right:0,neutral:0},E:{left:0,right:0,neutral:0},L:{left:0,right:0,neutral:0},P:{left:0,right:0,neutral:0}};
+  const sums = Object.fromEntries(Object.keys(AXES).map(k => [k, { left:0, right:0, neutral:0 }]));
   ORDERED.forEach(q=>{
     if(!Object.prototype.hasOwnProperty.call(ANSWERS,q.id)) return;
     const v=ANSWERS[q.id]; const f=RESP[v];
@@ -299,11 +280,11 @@ function decideSide(d){
 }
 
 function buildResultTitle(s){
-  const m=decideSide(s.M), e=decideSide(s.E), l=decideSide(s.L), p=decideSide(s.P);
-  if (m==='중도'&&e==='중도'&&l==='중도'&&p==='중도') return '극단적 중도주의';
+  const m=decideSide(s.M), e=decideSide(s.E), l=decideSide(s.L);
+  if (m==='중도' && e==='중도' && l==='중도') return '극단적 중도주의';
   const mprefix = (m==='좌') ? '반마법' : (m==='우') ? '친마법' : '마법중립';
-  const key=`${e}-${l}-${p}`;
-  return `${mprefix} · ${(NAME_MAP[key]||'중도주의(임시)')}`;
+  const label = EL_GRID_LABELS?.[e]?.[l] ?? '중도주의(임시)';
+  return `${mprefix} · ${label}`;
 }
 
 /* ===== 결과 렌더 ===== */
@@ -314,7 +295,7 @@ function renderResults(){
   const resultsEl=document.getElementById('results'); 
   resultsEl.innerHTML='';
 
-  const order=['M','E','L','P'];
+  const order = Object.keys(AXES);  // ['M','E','L']
   const title=buildResultTitle(s);
 
   const titleCard=document.createElement('div'); 

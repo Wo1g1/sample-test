@@ -31,7 +31,7 @@ var ALL_QUESTIONS = window.QUESTIONS ||  [
   {id:12, text:"마법 연구는 잠재적 위험 때문에 더 강한 규제가 필요하다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:13, text:"마법적 효용을 위해서라면 개인 자유가 다소 제한될 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:14, text:"마법적 기술의 상업적 이용은 가능한 한 자유롭게 허용되어야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0}]},
-  {id:15, text:"치안과 질서를 위해 개인의 자유를 일정 부분 양보해야 한다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0},{axis:'E']},
+  {id:15, text:"치안과 질서를 위해 개인의 자유를 일정 부분 양보해야 한다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:16, text:"마법은 공익을 명분으로 국가가 통제해야 한다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:17, text:"마법적 혁신은 국가의 간섭 없이 자율적으로 발전해야 한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:18, text:"사회적 약자를 위해 공권력이 자유를 제한할 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0},{axis:'E', side:'평등', w:0.6}]},
@@ -54,7 +54,13 @@ var ALL_QUESTIONS = window.QUESTIONS ||  [
   {id:35, text:"무면허 마법 실험은 강력히 처벌되어야 한다.", S:1.2, effects:[{axis:'L', side:'규제', w:1.0},{axis:'M', side:'반마법', w:0.4}]},
   {id:36, text:"귀족 특권은 공익을 위해 제한될 수 있다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.4}]},
   {id:37, text:"왕실이나 정부는 마법 연구를 후원하되 간섭해서는 안 된다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'L', side:'자유', w:0.6}]},
-  {id:38, text:"경쟁과 거래의 자유가 마법 기술의 질을 높인다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]}
+  {id:38, text:"경쟁과 거래의 자유가 마법 기술의 질을 높인다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
+  {id:39, text:"마법 지식의 귀족·길드 독점은 사회 정의에 반한다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'M', side:'친마법', w:0.6}]},
+  {id:40, text:"귀족 가문에 전승된 마법 전통은 질서를 위해 보존할 가치가 있다.", S:1.0, effects:[{axis:'E', side:'권위', w:1.0},{axis:'M', side:'친마법', w:0.6}]},
+  {id:41, text:"마법의 혜택이 특정 계층에만 돌아간다면, 그 자체로 부정의하다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'M', side:'반마법', w:0.6}]},
+  {id:42, text:"마법의 전면 금지는 오히려 하층민을 더 위험하게 만든다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'E', side:'평등', w:0.8}]},
+  {id:43, text:"왕실·귀족이 마법 연구의 큰 방향을 제시하는 편이 바람직하다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
+  {id:44, text:"마법 기술은 평등한 기회 분배 없이 사회를 왜곡시킨다.", S:1.0, effects:[{axis:'M', side:'반마법', w:1.0},{axis:'E', side:'평등', w:0.6}]}
 ];
 let QUESTIONS = ALL_QUESTIONS
   .map((q, i) => ({ ...q, id: i + 1 }));                                  // 1..N 재번호

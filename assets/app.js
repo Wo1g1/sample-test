@@ -22,37 +22,31 @@ var ALL_QUESTIONS = window.QUESTIONS ||  [
   {id:3, text:"충분히 검증 가능한 마법 원리의 연구는 허용되어야 한다.", S:1.2, effects:[{axis:'M', side:'친마법', w:1.0}]},
   {id:4, text:"마법은 예측 불가능성이 커서 연구 자체를 줄여야 한다.", S:1.0, effects:[{axis:'M', side:'반마법', w:1.0}]},
   {id:5, text:"마법은 과학과 동등한 지적 전통으로 존중받아야 한다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0}]},
-
   {id:6, text:"모든 신분은 법 앞에서 동등해야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0}]},
   {id:7, text:"사회의 안정에는 상층 엘리트의 지도가 필수적이다.", S:1.2, effects:[{axis:'E', side:'권위', w:1.0}]},
   {id:8, text:"출신과 혈통은 공적 권리에서 우선 고려 요소가 되어야만 한다.", S:1.2, effects:[{axis:'E', side:'권위', w:1.0}]},
   {id:9, text:"출신과 무관하게 공직 진출 기회가 주어져야 한다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0}]},
   {id:10, text:"위계적 권위는 질서 유지에 도움이 될 때가 많다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0}]},
-
   {id:11, text:"연구와 발명은 개인의 자유에 맡겨져야 한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0}]},
   {id:12, text:"마법 연구는 잠재적 위험 때문에 더 강한 규제가 필요하다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:13, text:"마법적 효용을 위해서라면 개인 자유가 다소 제한될 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:14, text:"마법적 기술의 상업적 이용은 가능한 한 자유롭게 허용되어야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0}]},
   {id:15, text:"치안과 질서를 위해 개인의 자유를 일정 부분 양보해야 한다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0},{axis:'E']},
-
   {id:16, text:"마법은 공익을 명분으로 국가가 통제해야 한다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:17, text:"마법적 혁신은 국가의 간섭 없이 자율적으로 발전해야 한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:18, text:"사회적 약자를 위해 공권력이 자유를 제한할 수 있다.", S:0.8, effects:[{axis:'L', side:'규제', w:1.0},{axis:'E', side:'평등', w:0.6}]},
   {id:19, text:"세습 특권은 가능한 한 축소되어야 한다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.4}]},
   {id:20, text:"신분 질서는 사회적 안정의 기초다.", S:1.0, effects:[{axis:'E', side:'권위', w:1.0},{axis:'L', side:'규제', w:0.4}]},
-
   {id:21, text:"마법사 길드는 공적 권한을 더 많이 가져야 한다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0},{axis:'M', side:'친마법', w:0.6}]},
   {id:22, text:"동일 가치의 노동에는 임금이 동등하게 보장되어야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.4}]},
   {id:23, text:"마법 교육은 개인 선택에 맡겨야 한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:24, text:"위험한 마법 실험은 전면 금지되어야 한다.", S:1.2, effects:[{axis:'L', side:'규제', w:1.0},{axis:'M', side:'반마법', w:0.6}]},
   {id:25, text:"마법 기술의 공개는 지식 공유를 촉진한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
-
   {id:26, text:"마법 장비 소지는 허가제로 관리해야 한다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0},{axis:'E', side:'권위', w:0.4}]},
   {id:27, text:"계층 간 혼인은 장려되어야 한다.", S:0.8, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'자유', w:0.6}]},
   {id:28, text:"엘리트의 통치가 일반 대중의 의사보다 합리적일 때가 많다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0},{axis:'L', side:'규제', w:0.6}]},
   {id:29, text:"마법 산업에 대한 규제는 최소한으로 제한해야 한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.8}]},
   {id:30, text:"권리의 보장은 평등의 기초다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'자유', w:0.6}]},
-
   {id:31, text:"마법 지식과 설계도의 공개는 원칙적으로 자유여야 한다.", S:1.2, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:32, text:"마법 장치의 개인 소지는 기본권으로 보장되는 자유다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]},
   {id:33, text:"마법사 자격 시험과 면허는 신분·배경과 무관해야 한다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.4}]},
@@ -61,7 +55,6 @@ var ALL_QUESTIONS = window.QUESTIONS ||  [
   {id:36, text:"귀족 특권은 공익을 위해 제한될 수 있다.", S:1.0, effects:[{axis:'E', side:'평등', w:1.0},{axis:'L', side:'규제', w:0.4}]},
   {id:37, text:"왕실이나 정부는 마법 연구를 후원하되 간섭해서는 안 된다.", S:1.0, effects:[{axis:'M', side:'친마법', w:1.0},{axis:'L', side:'자유', w:0.6}]},
   {id:38, text:"경쟁과 거래의 자유가 마법 기술의 질을 높인다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0},{axis:'M', side:'친마법', w:0.4}]}
-
 ];
 let QUESTIONS = ALL_QUESTIONS
   .map((q, i) => ({ ...q, id: i + 1 }));                                  // 1..N 재번호

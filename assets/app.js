@@ -41,7 +41,7 @@ var ALL_QUESTIONS = window.QUESTIONS ||  [
   {id:21, text:"마법사 길드는 공적 권한을 더 많이 가져야 한다.", S:0.8, effects:[{axis:'E', side:'권위', w:1.0}]},
   {id:22, text:"마법사 여부와 상관없이 동일 임금이 보장되어야 한다.", S:1.2, effects:[{axis:'E', side:'평등', w:1.0}]},
   {id:23, text:"마법 교육은 개인 선택에 맡겨야 한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0}]},
-  {id:24, text:"危険한 마법 의식은 전면 금지되어야 한다.", S:1.2, effects:[{axis:'L', side:'규제', w:1.0}]},
+  {id:24, text:"위험한 마법 의식은 전면 금지되어야 한다.", S:1.2, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:25, text:"마법 기술의 공개는 지식 공유를 촉진한다.", S:1.0, effects:[{axis:'L', side:'자유', w:1.0}]},
   {id:26, text:"마법 장비 소지는 허가제로 관리해야 한다.", S:1.0, effects:[{axis:'L', side:'규제', w:1.0}]},
   {id:27, text:"계층 간 혼인은 장려되어야 한다.", S:0.8, effects:[{axis:'E', side:'평등', w:1.0}]},

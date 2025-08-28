@@ -64,8 +64,6 @@ var ALL_QUESTIONS = window.QUESTIONS ||  [
 
 ];
 let QUESTIONS = ALL_QUESTIONS
-  .map(q => ({ ...q, effects: q.effects.filter(e => e.axis !== 'P') }))  // P축 효과 제거
-  .filter(q => q.effects.length > 0)                                      // 효과 없으면 문항 제거
   .map((q, i) => ({ ...q, id: i + 1 }));                                  // 1..N 재번호
 
 window.QUESTIONS = QUESTIONS;
